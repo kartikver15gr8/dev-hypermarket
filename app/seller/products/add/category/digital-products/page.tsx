@@ -13,6 +13,7 @@ import MarkdownEditor from "@/components/MarkdownEditor";
 import { usePrivy } from "@privy-io/react-auth";
 import { userIdState } from "@/store/atom/userIdState";
 import Link from "next/link";
+import { toast } from "sonner";
 
 const uploadcarekey = process.env.NEXT_PUBLIC_UPLOADCARE_KEY || "";
 export default function ProductUpload() {
@@ -55,6 +56,7 @@ export default function ProductUpload() {
   const userWalletAddress = useRecoilValue(phantomWallet);
   const [userId, setUserId] = useState(0);
   const [privyAccessToken, setPrivyAccessToken] = useState("");
+  const [productId, setProductId] = useState("");
 
   const fetchCategories = async () => {
     try {
@@ -101,19 +103,56 @@ export default function ProductUpload() {
   }, []);
 
   const formSubmit = async () => {
+    if (
+      !title ||
+      !description ||
+      !price ||
+      !comparePrice ||
+      !imageUrl ||
+      !categoryId
+    ) {
+      toast.info("Fill details first!");
+      return;
+    }
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/upload`,
+        `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/product`,
         {
-          file: file,
           name: title,
           description: newDescription,
           price: price,
           compare_price: comparePrice,
           thumbnail_url: imageUrl,
-          user_id: user_id,
           category_id: categoryId,
-          status: 1,
+        },
+        {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${privyAccessToken}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setProductId(response.data.rowId);
+      return response.data;
+    } catch (error) {
+      console.log(`You got an error: ${error}`);
+    }
+
+    console.log(selectedCategory);
+  };
+
+  const pushFile = async () => {
+    try {
+      if (productId.length < 4) {
+        toast.info("Add your product first.");
+        return;
+      }
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/products/upload-file`,
+        {
+          file: file,
+          product_id: productId,
         },
         {
           headers: {
@@ -127,7 +166,7 @@ export default function ProductUpload() {
       router.push("/seller/products/add/category/success");
       return response.data;
     } catch (error) {
-      console.log(`You got an error: ${error}`);
+      toast.error(`You got an error: ${error}`);
     }
 
     console.log(selectedCategory);
@@ -359,6 +398,11 @@ export default function ProductUpload() {
           </div>
         </div>
       </div>
+      <div className=" mt-5 flex justify-end">
+        <Button onClick={formSubmit} className="rounded w-36">
+          Add Product
+        </Button>
+      </div>
       {/* <Content /> */}
       <div className="mt-4 p-4 rounded-xl border bg-white">
         <p className="text-lg mb-4">Upload Content</p>
@@ -380,7 +424,7 @@ export default function ProductUpload() {
           </Button>
         </Link>
 
-        <Button onClick={formSubmit} className="rounded w-36">
+        <Button onClick={pushFile} className="rounded w-36">
           List Product
         </Button>
       </div>
