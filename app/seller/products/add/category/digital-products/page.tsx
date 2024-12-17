@@ -103,17 +103,6 @@ export default function ProductUpload() {
   }, []);
 
   const formSubmit = async () => {
-    if (
-      !title ||
-      !description ||
-      !price ||
-      !comparePrice ||
-      !imageUrl ||
-      !categoryId
-    ) {
-      toast.info("Fill details first!");
-      return;
-    }
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/product`,
