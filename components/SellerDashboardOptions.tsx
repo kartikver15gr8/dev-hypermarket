@@ -137,6 +137,18 @@ export default function SellerDashboardOptions({
                 <p className="text-[18px] ">Earnings</p>
               </li>
             </Link>
+            <Link href="">
+              <li
+                onClick={() => {
+                  toast.info("Services will be available soon!");
+                }}
+                className={
+                  pathname == "/seller/services" ? isActiveTab : isInactiveTab
+                }
+              >
+                <p className="text-[18px] ">Services</p>
+              </li>
+            </Link>
           </ul>
         </div>
         {/* <RegisterSeller /> */}

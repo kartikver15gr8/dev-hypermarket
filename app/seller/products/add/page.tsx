@@ -1,8 +1,13 @@
+"use client";
+
 import Image, { StaticImageData } from "next/image";
 import ball from "@/public/ball.png";
 import matrixcube from "@/public/matrixcube.png";
 import cubeik from "@/public/cubeik.png";
+import LinkIllu from "@/public/_static/illustrations/LinkIllu.png";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 const tabActive = {
   img: "w-24",
@@ -16,7 +21,9 @@ const tabInactive = {
   shortDes: "text-xs mt-3 text-[#a8a8a8]",
 };
 
-export default function page() {
+function CategoryPageContent() {
+  const searchParams = useSearchParams();
+  const productId = searchParams.get("productId");
   return (
     <div className="pt-16 min-h-screen bg-[#FAF9F5] flex flex-col items-center w-full">
       <div className="w-[80%]">
@@ -31,30 +38,38 @@ export default function page() {
           <p className="text-sm mt-2 text-[#52525C]">Categories:</p>
           <div className="grid grid-cols-1 gap-y-4 md:gap-y-0 md:grid-cols-3 mt-4 gap-x-4">
             <ProductCard
-              redirectHref="/seller/products/add/category/digital-products"
+              redirectHref={`/seller/products/add/category/digital-products?productId=${productId}`}
               img={matrixcube}
               title="Digital Products"
               examples="Ebooks, Softwares, Design Templates, and more..."
               isActive={true}
             />
             <ProductCard
-              redirectHref="/seller/products/add/category/private-groups"
+              redirectHref={`/seller/products/add/category/private-groups?productId=${productId}`}
               img={cubeik}
               title="Private Groups"
               examples="Alpha Groups!"
               isActive={true}
             />
             <ProductCard
-              redirectHref=""
-              img={ball}
-              title="Digital Services"
-              examples="COMING SOON…!"
-              isActive={false}
+              redirectHref={`/seller/products/add/category/links?productId=${productId}`}
+              img={LinkIllu}
+              title="Links"
+              examples="Sell products through buy links!"
+              isActive={true}
             />
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CategoryPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CategoryPageContent />
+    </Suspense>
   );
 }
 

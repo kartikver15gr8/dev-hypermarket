@@ -113,7 +113,7 @@ export default function SellerProductPage() {
               Listed Products
             </p>
             <Link
-              href={"products/add"}
+              href={"products/addproduct"}
               className="flex items-center justify-center gap-x-1 bg-[#4E6465] text-[12px] md:text-[14px] w-24 md:w-32 h-8 rounded-md hover:bg-[#bac3c4] transition-all duration-300"
             >
               <svg
