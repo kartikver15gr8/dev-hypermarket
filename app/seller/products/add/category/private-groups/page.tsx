@@ -215,7 +215,7 @@ function ProductUploadContent() {
   const [discordGuildId, setDiscordGuildId] = useState("");
   const [discordServerName, setDiscordServerName] = useState("");
   const [discordAccess, setDiscordAccess] = useState("");
-  const [isDiscordPopup, setDiscordPopup] = useState(true);
+  const [isDiscordPopup, setDiscordPopup] = useState(false);
   const handleOnCloseDiscord = () => {
     setDiscordPopup(false);
   };
@@ -241,6 +241,7 @@ function ProductUploadContent() {
         localStorage.setItem("DISCORD_ACCESS_TOKEN", data.access_token);
         localStorage.setItem("DISCORD_SERVER_NAME", data.guild.name);
         localStorage.setItem("DISCORD_GUILD_ID", data.guild.id);
+        setDiscordPopup(true);
 
         toast.info(
           `You got your discord access token: ${data.access_token}, you may now list the product.`
@@ -320,8 +321,24 @@ function ProductUploadContent() {
       {/* <Content /> */}
       <div className="mt-4 p-4 rounded-xl border bg-white">
         <p className="mb-2">What&apos;s Included</p>
-
-        <button onClick={() => setDiscordPopup(true)}>manage discord</button>
+        <div className="grid grid-cols-1 gap-y-2 md:gap-y-0 md:grid-cols-2 gap-x-4 mt-4">
+          <div>
+            <button
+              className="border px-4 rounded-full h-8"
+              onClick={() => setDiscordPopup(true)}
+            >
+              Manage Discord
+            </button>
+          </div>
+          <div>
+            <button
+              className="border px-4 rounded-full h-8"
+              onClick={() => setIsPopupOpen(true)}
+            >
+              Manage Telegram
+            </button>
+          </div>
+        </div>
         <div className="grid grid-cols-1 gap-y-2 md:gap-y-0 md:grid-cols-2 gap-x-4 mt-4">
           <>
             <div>
@@ -434,11 +451,11 @@ function ProductUploadContent() {
         </Link>
 
         <Button
-          onClick={createDiscordCall}
+          onClick={() => router.push("/seller/products/add/category/success")}
           className="rounded w-28 md:w-32 lg:w-36 text-xs md:text-sm"
           disabled={!discordGuildId ? true : false}
         >
-          List Product
+          DONE
         </Button>
       </div>
     </div>
@@ -718,10 +735,10 @@ const DiscordPopup = ({
   };
 
   useEffect(() => {
-    if (privyAccess) {
+    if (guildId) {
       rolesRefreshing();
     }
-  }, [privyAccess]);
+  }, [guildId]);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
