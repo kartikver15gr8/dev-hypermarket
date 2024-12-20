@@ -685,10 +685,10 @@ const DiscordPopup = ({
   const options = ["No Action", "Remove Role", "Kick User", "Remove All Users"];
 
   const refetchRoles = async () => {
-    const discord_productId = localStorage.getItem("DISCORD_PRODUCT_ID");
+    const productId = localStorage.getItem("PRODUCT_ID");
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/discord/${discord_productId}/roles`,
+        `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/discord/${productId}/roles`,
         {},
         {
           headers: {
@@ -703,10 +703,10 @@ const DiscordPopup = ({
   };
 
   const fetchRoles = async () => {
-    const discord_productId = localStorage.getItem("DISCORD_PRODUCT_ID");
+    const productId = localStorage.getItem("PRODUCT_ID");
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/discord/${discord_productId}/roles?filter=true`,
+        `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/discord/${productId}/roles?filter=true`,
         {
           headers: {
             Accept: "application/json",
