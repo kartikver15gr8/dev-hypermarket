@@ -706,7 +706,7 @@ const DiscordPopup = ({
     const productId = localStorage.getItem("PRODUCT_ID");
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/discord/${productId}/roles?filter=true`,
+        `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/discord/${productId}/roles?filter=false`,
         {
           headers: {
             Accept: "application/json",
@@ -808,7 +808,7 @@ const DiscordPopup = ({
                   onClick={CreateDiscordProduct}
                   className="border border-black w-full z-10 shadow-xl text-white bg-black rounded-lg  h-10"
                 >
-                  List Product
+                  SAVE PROGRESS
                 </Button>
               </div>
             </div>
