@@ -130,6 +130,7 @@ export default function AddProduct() {
         }
       );
       setProductId(response.data.rowId);
+      localStorage.setItem("PRODUCT_ID", response.data.rowId);
       return response.data;
     } catch (error) {
       console.log(`You got an error: ${error}`);

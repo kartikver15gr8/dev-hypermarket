@@ -25,6 +25,10 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "discord.apps.whop.com",
+      },
+      {
+        protocol: "https",
         hostname: "ucarecdn.com",
         pathname: "/**",
       },

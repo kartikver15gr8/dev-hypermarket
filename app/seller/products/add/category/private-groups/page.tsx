@@ -178,10 +178,13 @@ function ProductUploadContent() {
   //   console.log(selectedCategory);
   // };
 
+  const [discordProductId, setDiscordProductId] = useState("");
+
   const createDiscordCall = async () => {
+    const PRODUCT_ID = localStorage.getItem("PRODUCT_ID");
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/discord/${product_id}/create`,
+        `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/discord/${PRODUCT_ID}/create`,
         {
           server_discord_id: discordGuildId,
           server_name: discordServerName,
@@ -195,7 +198,10 @@ function ProductUploadContent() {
         }
       );
       console.log(response.data);
-      router.push("/seller/products/add/category/success");
+      setDiscordProductId(response.data.rowId);
+      setDiscordPopup(true);
+      localStorage.setItem("DISCORD_PRODUCT_ID", response.data.rowId);
+      // router.push("/seller/products/add/category/success");
       return response.data;
     } catch (error) {
       console.log(`Error while creating discord: ${error}`);
@@ -209,6 +215,10 @@ function ProductUploadContent() {
   const [discordGuildId, setDiscordGuildId] = useState("");
   const [discordServerName, setDiscordServerName] = useState("");
   const [discordAccess, setDiscordAccess] = useState("");
+  const [isDiscordPopup, setDiscordPopup] = useState(true);
+  const handleOnCloseDiscord = () => {
+    setDiscordPopup(false);
+  };
 
   const fetchAccessToken = async (code: any) => {
     try {
@@ -227,9 +237,14 @@ function ProductUploadContent() {
       if (response.ok) {
         console.log("Access Token:", data.access_token);
         console.log("GuildId: ", data.guild.id);
-        console.log("GuildId: ", data.guild.name);
+        console.log("Server Name: ", data.guild.name);
+        localStorage.setItem("DISCORD_ACCESS_TOKEN", data.access_token);
+        localStorage.setItem("DISCORD_SERVER_NAME", data.guild.name);
+        localStorage.setItem("DISCORD_GUILD_ID", data.guild.id);
 
-        toast.info(`You got your discord access token: ${data.access_token}`);
+        toast.info(
+          `You got your discord access token: ${data.access_token}, you may now list the product.`
+        );
         setAaccess(data.access_token);
         setDiscordAccess(data.access_token);
         setDiscordGuildId(data.guild.id);
@@ -266,6 +281,7 @@ function ProductUploadContent() {
       result += chars[randomIndex];
     }
     setTelegramVerificationToken(result);
+    localStorage.setItem("TeleToken", result);
     toast.info("Telegram verification token generated!");
     return result;
   };
@@ -304,137 +320,103 @@ function ProductUploadContent() {
       {/* <Content /> */}
       <div className="mt-4 p-4 rounded-xl border bg-white">
         <p className="mb-2">What&apos;s Included</p>
-        <div className="grid grid-cols-2 gap-x-4">
-          <div className="border h-16 p-2 rounded-lg flex items-center justify-between px-4">
-            <p className="">Private Group</p>
-            <button
-              onClick={toggleShowSocials}
-              className={`flex items-center justify-between w-16 h-8 rounded-full p-1 transition-colors duration-300 
-                ${showSocials ? "bg-blue-500" : "bg-gray-300"}`}
-            >
-              <span
-                className={`w-6 h-6 rounded-full bg-white transition-transform duration-300 
-                ${showSocials ? "transform translate-x-8" : ""}`}
-              ></span>
-            </button>
-          </div>
-          <div className="border h-16 p-2 rounded-lg flex items-center justify-between px-4">
-            <p>Digital Assets</p>
-            <button
-              onClick={handleToggleWhatIncluded}
-              className={`flex items-center justify-between w-16 h-8 rounded-full p-1 transition-colors duration-300 
-                ${toggleWhatIncluded ? "bg-blue-500" : "bg-gray-300"}`}
-            >
-              <span
-                className={`w-6 h-6 rounded-full bg-white transition-transform duration-300 
-                ${toggleWhatIncluded ? "transform translate-x-8" : ""}`}
-              ></span>
-            </button>
-          </div>
-        </div>
-        <div
-          className={`overflow-hidden transition-all duration-1000 ease-in-out ${
-            toggleWhatIncluded
-              ? "max-h-screen opacity-100"
-              : "max-h-0 opacity-0"
-          }`}
-        >
-          {toggleWhatIncluded ? (
-            <>
-              <p className="text-[15px] md:text-lg mb-4 mt-4">Upload Content</p>
-              <div className=" grid grid-cols-1 gap-x-5 rounded-md h-48">
-                <div className="border rounded-md">
-                  <div className="h-10 p-2 border-b bg-slate-200">
-                    <p>Content Being Bought</p>
-                  </div>
-                  <div className="flex flex-col items-center justify-center h-36">
-                    <input
-                      className="text-xs sm:text-sm lg:text-[15px]"
-                      type="file"
-                      onChange={handleFileChange}
-                    />
-                  </div>
-                </div>
-              </div>
-            </>
-          ) : (
-            <></>
-          )}
-        </div>
-        <div
-          className={`overflow-hidden transition-all duration-1000 ease-in-out ${
-            showSocials ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
-          }`}
-        >
-          {showSocials ? (
-            <>
-              <div className="grid grid-cols-1 gap-y-2 md:gap-y-0 md:grid-cols-2 gap-x-4 mt-4">
-                <div>
-                  <a
-                    href={"/api/auth/discord"}
-                    className={
-                      discordGuildId && discordServerName
-                        ? "border border-[#4B6161] bg-[#d9faf2] rounded-lg h-24 flex items-center px-2 gap-x-3 hover:bg-[#E4E4E5] transition-all duration-300"
-                        : "border rounded-lg h-24 flex items-center px-2 gap-x-3 hover:bg-[#E4E4E5] transition-all duration-300"
-                    }
-                  >
-                    <Image
-                      className="w-10 md:w-12 lg:w-14"
-                      src="https://s3-alpha-sig.figma.com/img/c89a/0a74/93f942f4f36a009c22adc6177b140086?Expires=1734307200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=LySqO17PCfD1vsF1049b38Kaiu1Q9R2qs4Org2J8QcaXMboKRJw~UPOYINNusCUcG~CxnQMC8sx8viEKNeKomYUGaPd9PVIIpl5eV3HaRTcSAAU6s0YJBISJM7WZsPQg-HPczVxb0-WaFBo2mGpC7OWlJ7g7FrhfmqnoAmdDb~iDOUSvHmcGsXVLtFaoyDkQC6xY1h--kEUHEqKlQ4JnGyocOw4tr3Omw8vFzEIi~F0nE7AchatNLdgF3ys7kOUsfmKhsOzeOItCDu76Pwh-cGndtwVMKyjpSshuZQ8kZF3EVYzjkbDg5xytwANpl7g8aokqwiz5CSQuCbOKqy2ycg__"
-                      width={200}
-                      height={200}
-                      alt=""
-                    />
-                    <div>
-                      <p className="font-medium text-[14px] md:text-[16px] lg:text-lg">
-                        Discord
-                      </p>
-                      <p className="text-[10px] md:text-[11px]">
-                        {discordGuildId
-                          ? `connected server: ${discordServerName}`
-                          : `Offer exclusive access to your private Discord server`}
-                      </p>
-                    </div>
-                  </a>
-                </div>
-                <>
-                  <div
-                    className="border rounded-lg h-24 flex items-center hover:bg-[#E4E4E5] transition-all duration-300 justify-between cursor-pointer"
-                    onClick={handleCardClick}
-                  >
-                    <div className="flex items-center px-2 gap-x-3">
-                      <Image
-                        className="w-10 md:w-12 lg:w-14"
-                        src="https://s3-alpha-sig.figma.com/img/1d2b/bc7f/92849e7867a21edd110a2b0e8a256f6e?Expires=1734307200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=KXCbXmfq1IjfOOzrGJzfWCl9Yl9UNj-SWz-mlmqH5Zfi~0-uKfDEpBVvBiLH-5N276OISTmZBs~v0XbJNwZavOwEKoZxa0S8~8nrh5irCkhsO5eSz62DTQawoVza297qf-ty8lwAUSlsj8yWkU1oHuGdNHqFnIyWju7PNN-P9jDNBrG6MUYJSMwJzG-9lTWqIOyMv3RrOeJf-nUYxIYQcTFYWy~0RPmsJYxUqYVGeH3Ivbjqim0v73LNB6~37POazuSAHUVXmbRglScZRgv4JTIrqmRhBNqjp54EEIRxsmfACjFcfiv1liKgHHi7vCM3GC34T-YcXUAJ8md9NHZ3ZQ__"
-                        width={200}
-                        height={200}
-                        alt=""
-                      />
-                      <div>
-                        <p className="font-medium text-[14px] md:text-[16px] lg:text-lg">
-                          Telegram
-                        </p>
-                        <p className="text-[10px] md:text-[11px]">
-                          Provide access to your private Telegram channel
-                        </p>
-                      </div>
-                    </div>
-                  </div>
 
-                  {isPopupOpen && (
-                    <TokenPopup
-                      onClose={handleClosePopup}
-                      onGenerate={generateTelegramVerificationToken}
-                      onCopy={copyTeleToken}
-                      telegramCode={telegramVerificationToken}
-                    />
-                  )}
-                </>
+        <button onClick={() => setDiscordPopup(true)}>manage discord</button>
+        <div className="grid grid-cols-1 gap-y-2 md:gap-y-0 md:grid-cols-2 gap-x-4 mt-4">
+          <>
+            <div>
+              <a
+                href={"/api/auth/discord"}
+                className={
+                  discordGuildId && discordServerName
+                    ? "border border-[#4B6161] bg-[#d9faf2] rounded-lg h-24 flex items-center px-2 gap-x-3 hover:bg-[#E4E4E5] transition-all duration-300"
+                    : "border rounded-lg h-24 flex items-center px-2 gap-x-3 hover:bg-[#E4E4E5] transition-all duration-300"
+                }
+              >
+                <Image
+                  className="w-10 md:w-12 lg:w-14"
+                  src="https://s3-alpha-sig.figma.com/img/c89a/0a74/93f942f4f36a009c22adc6177b140086?Expires=1734307200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=LySqO17PCfD1vsF1049b38Kaiu1Q9R2qs4Org2J8QcaXMboKRJw~UPOYINNusCUcG~CxnQMC8sx8viEKNeKomYUGaPd9PVIIpl5eV3HaRTcSAAU6s0YJBISJM7WZsPQg-HPczVxb0-WaFBo2mGpC7OWlJ7g7FrhfmqnoAmdDb~iDOUSvHmcGsXVLtFaoyDkQC6xY1h--kEUHEqKlQ4JnGyocOw4tr3Omw8vFzEIi~F0nE7AchatNLdgF3ys7kOUsfmKhsOzeOItCDu76Pwh-cGndtwVMKyjpSshuZQ8kZF3EVYzjkbDg5xytwANpl7g8aokqwiz5CSQuCbOKqy2ycg__"
+                  width={200}
+                  height={200}
+                  alt=""
+                />
+                <div className=" w-full">
+                  <p className="font-medium text-[14px] md:text-[16px] lg:text-lg">
+                    Discord
+                  </p>
+                  <p className="text-[10px] md:text-[11px]">
+                    {discordGuildId
+                      ? `connected server: ${discordServerName}`
+                      : `Offer exclusive access to your private Discord server`}
+                  </p>
+                </div>
+              </a>
+            </div>
+            {isDiscordPopup && (
+              <DiscordPopup
+                onClose={handleOnCloseDiscord}
+                discordAccessToken={discordAccess ? discordAccess : ""}
+                discordServerName={
+                  discordServerName ? discordServerName : "No Server"
+                }
+                guildId={discordGuildId ? discordGuildId : ""}
+                privyAccess={privyAccessToken}
+                product_id={discordProductId ? discordProductId : "djfk"}
+                CreateDiscordProduct={createDiscordCall}
+              />
+            )}
+          </>
+          <>
+            <div
+              className="border rounded-lg h-24 flex items-center hover:bg-[#E4E4E5] transition-all duration-300 justify-between cursor-pointer"
+              onClick={handleCardClick}
+            >
+              <div className="flex items-center px-2 gap-x-3">
+                <Image
+                  className="w-10 md:w-12 lg:w-14"
+                  src="https://s3-alpha-sig.figma.com/img/1d2b/bc7f/92849e7867a21edd110a2b0e8a256f6e?Expires=1734307200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=KXCbXmfq1IjfOOzrGJzfWCl9Yl9UNj-SWz-mlmqH5Zfi~0-uKfDEpBVvBiLH-5N276OISTmZBs~v0XbJNwZavOwEKoZxa0S8~8nrh5irCkhsO5eSz62DTQawoVza297qf-ty8lwAUSlsj8yWkU1oHuGdNHqFnIyWju7PNN-P9jDNBrG6MUYJSMwJzG-9lTWqIOyMv3RrOeJf-nUYxIYQcTFYWy~0RPmsJYxUqYVGeH3Ivbjqim0v73LNB6~37POazuSAHUVXmbRglScZRgv4JTIrqmRhBNqjp54EEIRxsmfACjFcfiv1liKgHHi7vCM3GC34T-YcXUAJ8md9NHZ3ZQ__"
+                  width={200}
+                  height={200}
+                  alt=""
+                />
+                <div>
+                  <p className="font-medium text-[14px] md:text-[16px] lg:text-lg">
+                    Telegram
+                  </p>
+                  <p className="text-[10px] md:text-[11px]">
+                    Provide access to your private Telegram channel
+                  </p>
+                </div>
               </div>
-            </>
-          ) : (
-            <></>
-          )}
+            </div>
+
+            {isPopupOpen && (
+              <TokenPopup
+                onClose={handleClosePopup}
+                onGenerate={generateTelegramVerificationToken}
+                onCopy={copyTeleToken}
+                telegramCode={telegramVerificationToken}
+                privyAccess={privyAccessToken}
+                productId={"9990f0e3-9371-41fc-882c-cec213580ff1"}
+              />
+            )}
+          </>
+        </div>
+
+        <p className="text-[15px] md:text-lg mb-4 mt-4">Upload Content</p>
+        <div className=" grid grid-cols-1 gap-x-5 rounded-md h-48">
+          <div className="border rounded-md">
+            <div className="h-10 p-2 border-b bg-slate-200">
+              <p>Content Being Bought</p>
+            </div>
+            <div className="flex flex-col items-center justify-center h-36">
+              <input
+                className="text-xs sm:text-sm lg:text-[15px]"
+                type="file"
+                onChange={handleFileChange}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -514,12 +496,41 @@ const TokenPopup = ({
   onGenerate,
   onCopy,
   telegramCode,
+  productId,
+  privyAccess,
 }: {
   onClose: any;
   onGenerate: any;
   onCopy: any;
   telegramCode: string;
+  productId: string;
+  privyAccess: string;
 }) => {
+  const verificationToken = localStorage.getItem("TeleToken");
+  const verifyTelegram = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/telegram/${productId}/channels`,
+        {
+          params: {
+            verification_code: verificationToken,
+            filter: 1,
+          },
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${privyAccess}`,
+          },
+        }
+      );
+      console.log(response.data);
+      toast.info(response.data);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      //@ts-ignore
+      toast.info("Failed to verify, try again!");
+    }
+  };
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
       <div className="bg-white rounded-xl p-5 shadow-lg w-[700px]">
@@ -597,6 +608,7 @@ const TokenPopup = ({
                 >
                   Generate
                 </button>
+
                 <button
                   onClick={onCopy}
                   className="flex items-center gap-x-1 mt-3 h-8 bg-black text-white rounded-lg w-24 justify-center hover:bg-[#586e6e] hover:text-white transition-all duration-300"
@@ -613,6 +625,12 @@ const TokenPopup = ({
                   </svg>
                   Copy
                 </button>
+                <button
+                  onClick={verifyTelegram}
+                  className=" mt-3 h-8 bg-[#3e607e] border border-[#314b62] text-white rounded-lg w-24 hover:bg-[#586e6e] hover:text-white transition-all duration-300"
+                >
+                  Verify
+                </button>
               </div>
             </div>
           </div>
@@ -621,3 +639,297 @@ const TokenPopup = ({
     </div>
   );
 };
+
+const activeTabForDiscord = "px-4 border-b-2 border-black";
+const inActiveTabForDiscord = "px-4 border-b-2";
+
+const DiscordPopup = ({
+  onClose,
+  discordServerName,
+  guildId,
+  discordAccessToken,
+  privyAccess,
+  product_id,
+  CreateDiscordProduct,
+}: {
+  onClose: any;
+  discordServerName: string;
+  guildId: string;
+  discordAccessToken: string;
+  privyAccess: string;
+  product_id: string;
+  CreateDiscordProduct: () => Promise<{ rowId: string } | void>;
+}) => {
+  const [tabOpen, setTabOpen] = useState<"roles" | "settings">("settings");
+  const [roles, setRoles] = useState([]);
+
+  const [selectedOption, setSelectedOption] = useState("No Action");
+
+  const options = ["No Action", "Remove Role", "Kick User", "Remove All Users"];
+
+  const refetchRoles = async () => {
+    const discord_productId = localStorage.getItem("DISCORD_PRODUCT_ID");
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/discord/${discord_productId}/roles`,
+        {},
+        {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${privyAccess}`,
+          },
+        }
+      );
+    } catch (error) {
+      toast.error("Error while refreshing roles");
+    }
+  };
+
+  const fetchRoles = async () => {
+    const discord_productId = localStorage.getItem("DISCORD_PRODUCT_ID");
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/discord/${discord_productId}/roles?filter=true`,
+        {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${privyAccess}`,
+          },
+        }
+      );
+      console.log(response.data);
+      setRoles(response.data);
+      // router.push("/seller/products/add/category/success");
+      return response.data;
+    } catch (error) {
+      console.log(`Error while creating discord: ${error}`);
+    }
+  };
+
+  const rolesRefreshing = async () => {
+    try {
+      if (privyAccess) {
+        await refetchRoles();
+        await fetchRoles();
+      }
+    } catch (error) {
+      toast.info("Error while refreshing roles");
+    }
+  };
+
+  useEffect(() => {
+    if (privyAccess) {
+      rolesRefreshing();
+    }
+  }, [privyAccess]);
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
+      <div className="bg-white rounded-xl p-5 shadow-lg w-[850px]">
+        <div className="flex justify-between items-center">
+          <div className="flex gap-x-2 items-center">
+            <Image
+              className="w-6 md:w-7 lg:w-8 rounded-lg"
+              src="https://discord.apps.whop.com/_next/image/?url=%2F_static%2Fdiscord.png&w=64&q=75"
+              width={200}
+              height={200}
+              alt=""
+            />
+            <h2 className="text-lg font-semibold">Manage Your Discord</h2>
+          </div>
+          <button onClick={onClose} className="">
+            <svg
+              className="w-7 hover:rotate-180 transition-all duration-300"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="black"
+                d="m8.4 16.308l3.6-3.6l3.6 3.6l.708-.708l-3.6-3.6l3.6-3.6l-.708-.708l-3.6 3.6l-3.6-3.6l-.708.708l3.6 3.6l-3.6 3.6zM12.003 21q-1.866 0-3.51-.708q-1.643-.709-2.859-1.924t-1.925-2.856T3 12.003t.709-3.51Q4.417 6.85 5.63 5.634t2.857-1.925T11.997 3t3.51.709q1.643.708 2.859 1.922t1.925 2.857t.709 3.509t-.708 3.51t-1.924 2.859t-2.856 1.925t-3.509.709M12 20q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div className="mt-4">
+          <div className="flex">
+            <p
+              onClick={() => {
+                setTabOpen("roles");
+              }}
+              className={
+                tabOpen == "roles" ? activeTabForDiscord : inActiveTabForDiscord
+              }
+            >
+              Roles
+            </p>
+            <p
+              onClick={() => {
+                setTabOpen("settings");
+              }}
+              className={
+                tabOpen == "settings"
+                  ? activeTabForDiscord
+                  : inActiveTabForDiscord
+              }
+            >
+              Settings
+            </p>
+          </div>
+        </div>
+
+        {tabOpen == "roles" && (
+          <div className="mt-4 border p-4 rounded-lg">
+            <p className=" font-medium">Connected Server</p>
+
+            <div className="w-full">
+              <p className="border border-[#7F7F7F] h-10 items-center flex text-lg p-1 rounded px-2 mt-1 w-full">
+                {discordServerName}
+              </p>
+              <div className=" mt-4 flex">
+                <Button
+                  onClick={CreateDiscordProduct}
+                  className="border border-black w-full z-10 shadow-xl text-white bg-black rounded-lg  h-10"
+                >
+                  List Product
+                </Button>
+              </div>
+            </div>
+
+            {/* <div className=" mt-2 p-4 flex items-center justify-center rounded-lg border relative w-full h-96 bg-black bg-opacity-65">
+              <Image
+                src={
+                  "https://imgs.search.brave.com/XfgddFVUkZ-YyQmowtlwOCm0SfUgo82hQmJ8O3Ru8fQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNTAy/MjU3MTQ2L3Bob3Rv/L2xlYWRlcnNoaXAu/anBnP3M9NjEyeDYx/MiZ3PTAmaz0yMCZj/PVBXNWl6M1Q0bTdX/djFqSnlrT3d5OGZr/YTBOSU83Mmt3ZDc5/U3NDdTRNRUk9"
+                }
+                alt=""
+                layout="fill" // Use layout fill to cover the entire div
+                objectFit="cover" // Ensure the image covers the div without distortion
+                className="rounded-lg opacity-45" // Optional: Add rounded corners to the image
+              />
+              <button className="border border-[#9A9999] bg-white z-10 shadow-xl rounded-xl  w-40 h-10">
+                SELECT ROLES
+              </button>
+             
+             
+             
+
+
+            </div> */}
+          </div>
+        )}
+
+        {tabOpen == "settings" && (
+          <div className="border rounded-xl mt-4 p-4">
+            <p className="font-medium text-[#5e5e5e]">Discord Server</p>
+            <div className="grid grid-cols-10 gap-x-2 mt-2">
+              <p className="col-span-8 border px-2 h-8 items-center flex rounded-lg border-[#9a9999]">
+                {discordServerName}
+              </p>
+              <div className="border border-red-600 w-fit px-3 rounded-lg text-red-600 font-medium col-span-2 flex items-center gap-1">
+                <svg
+                  className="w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill="#DC2C25"
+                    d="M7 21q-.825 0-1.412-.587T5 19V6q-.425 0-.712-.288T4 5t.288-.712T5 4h4q0-.425.288-.712T10 3h4q.425 0 .713.288T15 4h4q.425 0 .713.288T20 5t-.288.713T19 6v13q0 .825-.587 1.413T17 21zm3-4q.425 0 .713-.288T11 16V9q0-.425-.288-.712T10 8t-.712.288T9 9v7q0 .425.288.713T10 17m4 0q.425 0 .713-.288T15 16V9q0-.425-.288-.712T14 8t-.712.288T13 9v7q0 .425.288.713T14 17"
+                  />
+                </svg>
+                <p>Disconnect</p>
+              </div>
+            </div>
+
+            <p className="mt-5 mb-3 font-medium text-[#5e5e5e]">
+              Event Log Channels
+            </p>
+
+            <div className="border flex items-center gap-x-1  w-fit px-2 rounded-lg h-9 bg-[#F2F3F4] border-[#9a9999]">
+              <svg
+                className="w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="#020817"
+                  d="M12 21q-.425 0-.712-.288T11 20v-7H4q-.425 0-.712-.288T3 12t.288-.712T4 11h7V4q0-.425.288-.712T12 3t.713.288T13 4v7h7q.425 0 .713.288T21 12t-.288.713T20 13h-7v7q0 .425-.288.713T12 21"
+                />
+              </svg>
+              <p>Add channels</p>
+            </div>
+            <p className="mt-5 mb-3 font-medium text-[#5e5e5e]">
+              Assign this role after past due bills
+            </p>
+
+            <div className="border flex items-center gap-x-1 w-fit px-3 rounded-lg h-9 bg-[#F2F3F4] border-[#9a9999]">
+              <svg
+                className="w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="#020817"
+                  d="M15 7q-.425 0-.712-.288T14 6t.288-.712T15 5h6q.425 0 .713.288T22 6t-.288.713T21 7zm0 4q-.425 0-.712-.288T14 10t.288-.712T15 9h6q.425 0 .713.288T22 10t-.288.713T21 11zm0 4q-.425 0-.712-.288T14 14t.288-.712T15 13h6q.425 0 .713.288T22 14t-.288.713T21 15zm-7-1q-1.25 0-2.125-.875T5 11t.875-2.125T8 8t2.125.875T11 11t-.875 2.125T8 14m-6 5v-.9q0-.525.25-1t.7-.75q1.125-.675 2.388-1.012T8 15t2.663.338t2.387 1.012q.45.275.7.75t.25 1v.9q0 .425-.288.713T13 20H3q-.425 0-.712-.288T2 19"
+                />
+              </svg>
+              <p>Select Roles</p>
+            </div>
+            <p className="mt-5 mb-3 font-medium text-[#5e5e5e]">
+              Cancellation actions
+            </p>
+
+            <div className="p-4 border items-center flex flex-col w-full px-3 rounded-lg bg-[#F2F3F4] border-[#9a9999]">
+              <p className="font-medium mb-4">Select Action</p>
+              <div className="grid grid-cols-4 w-full gap-x-2">
+                {options.map((option) => (
+                  <label
+                    key={option}
+                    className="cursor-pointer col-span-1 grid"
+                  >
+                    <input
+                      type="radio"
+                      name="toggleOptions"
+                      value={option}
+                      checked={selectedOption === option}
+                      onChange={() => setSelectedOption(option)}
+                      className="hidden" // Hide the default radio button
+                    />
+                    <div
+                      className={`flex items-center justify-center w-full h-8 rounded-lg cursor-pointer 
+                ${
+                  selectedOption === option
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200"
+                }`}
+                    >
+                      {option}
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// gear button
+{
+  /* <button
+onClick={() => setDiscordPopup(true)}
+className="border border-[#767676] p-1 rounded-full flex justify-between items-center"
+>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  className="w-6"
+  viewBox="0 0 24 24"
+>
+  <path
+    fill="#767676"
+    d="m10.135 21l-.362-2.892q-.479-.145-1.035-.454q-.557-.31-.947-.664l-2.668 1.135l-1.865-3.25l2.306-1.739q-.045-.27-.073-.558q-.03-.288-.03-.559q0-.252.03-.53q.028-.278.073-.626L3.258 9.126l1.865-3.212L7.771 7.03q.448-.373.97-.673q.52-.3 1.013-.464L10.134 3h3.732l.361 2.912q.575.202 1.016.463t.909.654l2.725-1.115l1.865 3.211l-2.382 1.796q.082.31.092.569t.01.51q0 .233-.02.491q-.019.259-.088.626l2.344 1.758l-1.865 3.25l-2.681-1.154q-.467.393-.94.673t-.985.445L13.866 21zm1.838-6.5q1.046 0 1.773-.727T14.473 12t-.727-1.773t-1.773-.727q-1.052 0-1.776.727T9.473 12t.724 1.773t1.776.727"
+  />
+</svg>
+</button> */
+}
