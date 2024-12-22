@@ -15,6 +15,7 @@ import { userIdState } from "@/store/atom/userIdState";
 import Link from "next/link";
 import { discordAccessToken } from "@/store/atom/discordAccessToken";
 import { toast } from "sonner";
+import { RoleSchema } from "@/lib/models";
 
 const uploadcarekey = process.env.NEXT_PUBLIC_UPLOADCARE_KEY || "";
 
@@ -677,8 +678,8 @@ const DiscordPopup = ({
   product_id: string;
   CreateDiscordProduct: () => Promise<{ rowId: string } | void>;
 }) => {
-  const [tabOpen, setTabOpen] = useState<"roles" | "settings">("settings");
-  const [roles, setRoles] = useState([]);
+  const [tabOpen, setTabOpen] = useState<"roles" | "settings">("roles");
+  const [roles, setRoles] = useState<RoleSchema[]>([]);
 
   const [selectedOption, setSelectedOption] = useState("No Action");
 
@@ -731,6 +732,14 @@ const DiscordPopup = ({
       }
     } catch (error) {
       toast.info("Error while refreshing roles");
+    }
+  };
+
+  const triggerRefetchRoles = () => {
+    if (guildId) {
+      rolesRefreshing();
+    } else {
+      toast.info("First go and click on 'SAVE PROGRESS' in the Roles tab.");
     }
   };
 
@@ -891,38 +900,46 @@ const DiscordPopup = ({
               </svg>
               <p>Select Roles</p>
             </div>
-            <p className="mt-5 mb-3 font-medium text-[#5e5e5e]">
-              Cancellation actions
-            </p>
 
-            <div className="p-4 border items-center flex flex-col w-full px-3 rounded-lg bg-[#F2F3F4] border-[#9a9999]">
-              <p className="font-medium mb-4">Select Action</p>
-              <div className="grid grid-cols-4 w-full gap-x-2">
-                {options.map((option) => (
-                  <label
-                    key={option}
-                    className="cursor-pointer col-span-1 grid"
+            <div className="mt-5 mb-3 font-medium text-[#5e5e5e]">
+              <div className="flex items-center justify-between">
+                <p>Available Roles</p>
+                <button
+                  onClick={triggerRefetchRoles}
+                  className="bg-black text-white px-4 h-8 rounded-lg flex items-center "
+                >
+                  <svg
+                    className="w-5 mr-1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
                   >
-                    <input
-                      type="radio"
-                      name="toggleOptions"
-                      value={option}
-                      checked={selectedOption === option}
-                      onChange={() => setSelectedOption(option)}
-                      className="hidden" // Hide the default radio button
+                    <path
+                      fill="white"
+                      d="M5.1 16.05q-.55-.95-.825-1.95T4 12.05q0-3.35 2.325-5.7T12 4h.175l-1.6-1.6l1.4-1.4l4 4l-4 4l-1.4-1.4l1.6-1.6H12Q9.5 6 7.75 7.763T6 12.05q0 .65.15 1.275t.45 1.225zM12.025 23l-4-4l4-4l1.4 1.4l-1.6 1.6H12q2.5 0 4.25-1.763T18 11.95q0-.65-.15-1.275T17.4 9.45l1.5-1.5q.55.95.825 1.95T20 11.95q0 3.35-2.325 5.7T12 20h-.175l1.6 1.6z"
                     />
-                    <div
-                      className={`flex items-center justify-center w-full h-8 rounded-lg cursor-pointer 
-                ${
-                  selectedOption === option
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200"
-                }`}
-                    >
-                      {option}
-                    </div>
-                  </label>
-                ))}
+                  </svg>
+                  <p>Refetch Roles</p>
+                </button>
+              </div>
+              <div className="border w-full mt-2 p-1 rounded-md overflow-y-auto h-28 scroll-smooth">
+                {roles.length > 0 ? (
+                  <div>
+                    {roles?.map((role) => {
+                      return (
+                        <p
+                          key={role.id}
+                          className=" p-1 border border-white rounded hover:bg-[#F2F3F4] hover:border-[#d8d9da] transition-all duration-200 "
+                        >
+                          {role.name}
+                        </p>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className=" text-black p-1 border border-white rounded hover:bg-[#F2F3F4] hover:border-[#d8d9da] transition-all duration-200 ">
+                    No Roles Fetched!
+                  </p>
+                )}
               </div>
             </div>
           </div>

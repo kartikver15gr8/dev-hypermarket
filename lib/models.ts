@@ -259,3 +259,16 @@ export interface AffiliateAnalyticsTwo {
     AffiliateAnalytics: any;
   };
 }
+
+export interface RoleSchema {
+  id: string;
+  product_id: string;
+  name: string;
+  server_id: string;
+  color: bigint;
+  role_id: string;
+  include_status: boolean;
+  created_at: string;
+  updated_at: string;
+  deleted_at: any;
+}
