@@ -533,7 +533,7 @@ const TokenPopup = ({
         {
           params: {
             verification_code: verificationToken,
-            filter: 1,
+            filter: 0,
           },
           headers: {
             Accept: "application/json",
