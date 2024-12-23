@@ -202,6 +202,7 @@ function ProductUploadContent() {
       setDiscordProductId(response.data.rowId);
       setDiscordPopup(true);
       localStorage.setItem("DISCORD_PRODUCT_ID", response.data.rowId);
+      toast.info("Saved Progress, Your discord group is created!");
       // router.push("/seller/products/add/category/success");
       return response.data;
     } catch (error) {
@@ -658,6 +659,8 @@ const TokenPopup = ({
   );
 };
 
+import ManageDiscordBot from "@/public/_static/background/ManageDiscordBot.png";
+
 const activeTabForDiscord = "px-4 border-b-2 border-black";
 const inActiveTabForDiscord = "px-4 border-b-2";
 
@@ -722,6 +725,49 @@ const DiscordPopup = ({
     } catch (error) {
       console.log(`Error while creating discord: ${error}`);
     }
+  };
+  const [loading, setLoading] = useState(false);
+
+  const AddRole = async ({
+    roleId,
+    roleName,
+    includeStatus,
+  }: {
+    roleId: string;
+    includeStatus: boolean;
+    roleName: string;
+  }) => {
+    const productId = localStorage.getItem("PRODUCT_ID");
+    setLoading(true);
+    try {
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/discord/${productId}/roles`,
+        { role_id: roleId, include_status: includeStatus },
+        {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${privyAccess}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setLoading(false);
+      toast.info(`${roleName} is added`);
+    } catch (error) {
+      setLoading(false);
+      toast.info("Failed to add role");
+    }
+  };
+  const handleAddRole = (
+    roleId: string,
+    roleName: string,
+    includeStatus: boolean
+  ) => {
+    AddRole({
+      roleId: roleId,
+      roleName: roleName,
+      includeStatus: includeStatus,
+    });
   };
 
   const rolesRefreshing = async () => {
@@ -806,20 +852,105 @@ const DiscordPopup = ({
 
         {tabOpen == "roles" && (
           <div className="mt-4 border p-4 rounded-lg">
-            <p className=" font-medium">Connected Server</p>
-
-            <div className="w-full">
-              <p className="border border-[#7F7F7F] h-10 items-center flex text-lg p-1 rounded px-2 mt-1 w-full">
-                {discordServerName}
-              </p>
-              <div className=" mt-4 flex">
-                <Button
-                  onClick={CreateDiscordProduct}
-                  className="border border-black w-full z-10 shadow-xl text-white bg-black rounded-lg  h-10"
-                >
-                  SAVE PROGRESS
-                </Button>
+            {roles.length <= 0 ? (
+              <>
+                <div className="mb-1 flex justify-between">
+                  <div>
+                    <p className="font-medium text-xl">Something Went Wrong!</p>
+                    <p className="text-sm">
+                      Please open Discord, go to your server&apos;s settings,
+                      and drag SENDIT Bot to the top of your roles.
+                    </p>
+                  </div>
+                  <button
+                    onClick={triggerRefetchRoles}
+                    className="bg-black text-white px-4 h-8 rounded-lg flex items-center "
+                  >
+                    <svg
+                      className="w-5 mr-1"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fill="white"
+                        d="M5.1 16.05q-.55-.95-.825-1.95T4 12.05q0-3.35 2.325-5.7T12 4h.175l-1.6-1.6l1.4-1.4l4 4l-4 4l-1.4-1.4l1.6-1.6H12Q9.5 6 7.75 7.763T6 12.05q0 .65.15 1.275t.45 1.225zM12.025 23l-4-4l4-4l1.4 1.4l-1.6 1.6H12q2.5 0 4.25-1.763T18 11.95q0-.65-.15-1.275T17.4 9.45l1.5-1.5q.55.95.825 1.95T20 11.95q0 3.35-2.325 5.7T12 20h-.175l1.6 1.6z"
+                      />
+                    </svg>
+                    <p>Refetch Roles</p>
+                  </button>
+                </div>
+                <div className="border rounded-md h-96 w-full flex items-center justify-center overflow-hidden bg-[#32333A]">
+                  <Image
+                    src={ManageDiscordBot}
+                    alt=""
+                    className="max-w-full max-h-full object-contain"
+                  />
+                </div>
+              </>
+            ) : (
+              <div className="mb-3 font-medium text-[#5e5e5e]">
+                <div className="flex justify-between">
+                  <p>Available Roles</p>
+                  <button
+                    onClick={triggerRefetchRoles}
+                    className="bg-black text-white px-4 h-8 rounded-lg flex items-center "
+                  >
+                    <svg
+                      className="w-5 mr-1"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fill="white"
+                        d="M5.1 16.05q-.55-.95-.825-1.95T4 12.05q0-3.35 2.325-5.7T12 4h.175l-1.6-1.6l1.4-1.4l4 4l-4 4l-1.4-1.4l1.6-1.6H12Q9.5 6 7.75 7.763T6 12.05q0 .65.15 1.275t.45 1.225zM12.025 23l-4-4l4-4l1.4 1.4l-1.6 1.6H12q2.5 0 4.25-1.763T18 11.95q0-.65-.15-1.275T17.4 9.45l1.5-1.5q.55.95.825 1.95T20 11.95q0 3.35-2.325 5.7T12 20h-.175l1.6 1.6z"
+                      />
+                    </svg>
+                    <p>Refetch Roles</p>
+                  </button>
+                </div>
+                <div className="border w-full mt-2 p-1 rounded-md overflow-y-auto h-28 scroll-smooth">
+                  {roles.length > 0 ? (
+                    <div>
+                      {roles?.map((role) => {
+                        return (
+                          <div
+                            key={role.id}
+                            className="flex items-center justify-between p-1 border border-white rounded hover:bg-[#F2F3F4] hover:border-[#d8d9da] transition-all duration-200 "
+                          >
+                            <p>{role.name}</p>
+                            <button
+                              onClick={() =>
+                                handleAddRole(role.id, role.name, true)
+                              }
+                              className="border px-2 rounded bg-black text-white"
+                              disabled={loading}
+                            >
+                              {loading ? "Adding..." : "Add Role"}
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className=" flex items-center justify-between text-black p-1 border border-white rounded hover:bg-[#F2F3F4] hover:border-[#d8d9da] transition-all duration-200 ">
+                      <p> No Roles Fetched!</p>
+                    </div>
+                  )}
+                </div>
               </div>
+            )}
+
+            <div className="grid grid-cols-10 gap-x-2 items-center mt-3">
+              <div className="col-span-8 gap-x-2 border border-[#7F7F7F] h-10 items-center flex text-lg p-1 rounded px-2 w-full">
+                <p className="font-medium col-span-2">Connected Server: </p>
+                <p> {discordServerName}</p>
+              </div>
+              <Button
+                onClick={CreateDiscordProduct}
+                className="col-span-2 border border-black w-full z-10 shadow-xl text-white bg-black rounded-lg  h-10"
+              >
+                SAVE PROGRESS
+              </Button>
             </div>
 
             {/* <div className=" mt-2 p-4 flex items-center justify-center rounded-lg border relative w-full h-96 bg-black bg-opacity-65">
@@ -899,48 +1030,6 @@ const DiscordPopup = ({
                 />
               </svg>
               <p>Select Roles</p>
-            </div>
-
-            <div className="mt-5 mb-3 font-medium text-[#5e5e5e]">
-              <div className="flex items-center justify-between">
-                <p>Available Roles</p>
-                <button
-                  onClick={triggerRefetchRoles}
-                  className="bg-black text-white px-4 h-8 rounded-lg flex items-center "
-                >
-                  <svg
-                    className="w-5 mr-1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      fill="white"
-                      d="M5.1 16.05q-.55-.95-.825-1.95T4 12.05q0-3.35 2.325-5.7T12 4h.175l-1.6-1.6l1.4-1.4l4 4l-4 4l-1.4-1.4l1.6-1.6H12Q9.5 6 7.75 7.763T6 12.05q0 .65.15 1.275t.45 1.225zM12.025 23l-4-4l4-4l1.4 1.4l-1.6 1.6H12q2.5 0 4.25-1.763T18 11.95q0-.65-.15-1.275T17.4 9.45l1.5-1.5q.55.95.825 1.95T20 11.95q0 3.35-2.325 5.7T12 20h-.175l1.6 1.6z"
-                    />
-                  </svg>
-                  <p>Refetch Roles</p>
-                </button>
-              </div>
-              <div className="border w-full mt-2 p-1 rounded-md overflow-y-auto h-28 scroll-smooth">
-                {roles.length > 0 ? (
-                  <div>
-                    {roles?.map((role) => {
-                      return (
-                        <p
-                          key={role.id}
-                          className=" p-1 border border-white rounded hover:bg-[#F2F3F4] hover:border-[#d8d9da] transition-all duration-200 "
-                        >
-                          {role.name}
-                        </p>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <p className=" text-black p-1 border border-white rounded hover:bg-[#F2F3F4] hover:border-[#d8d9da] transition-all duration-200 ">
-                    No Roles Fetched!
-                  </p>
-                )}
-              </div>
             </div>
           </div>
         )}
