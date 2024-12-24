@@ -15,6 +15,7 @@ import { PurchasesInterface, SellerAnalytics } from "@/lib/models";
 import spinnerthree from "@/public/loaders/spinnerthree.svg";
 import { toast } from "sonner";
 import ShareClaimPurchase from "./ShareClaimPurchase";
+import { ResponsiveBarGraph } from "./ResponsiveBarGraph";
 
 export default function SellerDashboard() {
   const [sellerAnalytics, setSellerAnalytics] = useState<SellerAnalytics>({
@@ -696,7 +697,7 @@ export const GraphWindow = ({
       </div>
 
       <div className="col-span-9 sm:col-span-8 flex items-center justify-center h-full flex-col">
-        <div className="mb-2 flex items-center gap-x-4 w-full justify-end ">
+        {/* <div className="mb-2 flex items-center gap-x-4 w-full justify-end ">
           <p className="text-[#8B8B92] text-[11px] sm:text-[13px]">View</p>
           <div className="border h-8 w-16 rounded-md flex items-center justify-center gap-x-1 hover:bg-[#e2e2e4] transition-all duration-300">
             <p className=" text-[11px] sm:text-[13px]">YTD</p>
@@ -716,8 +717,20 @@ export const GraphWindow = ({
               />
             </svg>
           </div>
-        </div>
-        <ResponsiveLinearChart />
+        </div> */}
+        {/* <ResponsiveLinearChart /> */}
+        <ResponsiveBarGraph
+          className="h-64 w-full"
+          graphData={[
+            { month: "Sun", sales: 400 },
+            { month: "Mon", sales: 300 },
+            { month: "Tue", sales: 600 },
+            { month: "Wed", sales: 800 },
+            { month: "Thu", sales: 500 },
+            { month: "Fri", sales: 700 },
+            { month: "Sat", sales: 100 },
+          ]}
+        />
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import cartIcon from "@/public/svgIcons/cart.svg";
 import eyeIcon from "@/public/svgIcons/eye.svg";
 import ResponsiveLinearChart from "../ResponsiveLinearChart";
-import { ResponsiveBarChart } from "../ResponsiveBarChart";
+import { ResponsiveBarGraph } from "../ResponsiveBarGraph";
 
 export default function Analytics() {
   return (
@@ -24,7 +24,23 @@ export default function Analytics() {
           <MidSection />
         </div>
         {/* <GraphWindow /> */}
-        <ResponsiveBarChart />
+        <ResponsiveBarGraph
+          className="h-64 w-full"
+          graphData={[
+            { month: "Jan", sales: 400 },
+            { month: "Feb", sales: 300 },
+            { month: "Mar", sales: 600 },
+            { month: "Apr", sales: 800 },
+            { month: "May", sales: 500 },
+            { month: "Jun", sales: 700 },
+            { month: "Jul", sales: 100 },
+            { month: "Aug", sales: 330 },
+            { month: "Sep", sales: 140 },
+            { month: "Oct", sales: 1000 },
+            { month: "Nov", sales: 1209 },
+            { month: "Dec", sales: 1500 },
+          ]}
+        />
         <Affiliates />
         <TopProductSold />
       </div>
