@@ -210,6 +210,12 @@ function ProductUploadContent() {
     }
   };
 
+  useEffect(() => {
+    if (discordGuildId && discordServerName) {
+      createDiscordCall();
+    }
+  }, []);
+
   const [discord_access_token, setDiscordAccessToken] =
     useRecoilState(discordAccessToken);
   const setAaccess = useSetRecoilState(discordAccessToken);
@@ -661,8 +667,8 @@ const TokenPopup = ({
 
 import ManageDiscordBot from "@/public/_static/background/ManageDiscordBot.png";
 
-const activeTabForDiscord = "px-4 border-b-2 border-black";
-const inActiveTabForDiscord = "px-4 border-b-2";
+const activeTabForDiscord = "px-4 border-b-2 border-black cursor-pointer";
+const inActiveTabForDiscord = "px-4 border-b-2 cursor-pointer";
 
 const DiscordPopup = ({
   onClose,
@@ -770,14 +776,19 @@ const DiscordPopup = ({
     });
   };
 
+  const [isRefetching, setIsRefetching] = useState(false);
+
   const rolesRefreshing = async () => {
+    setIsRefetching(true);
     try {
       if (privyAccess) {
         await refetchRoles();
         await fetchRoles();
       }
+      setIsRefetching(false);
     } catch (error) {
       toast.info("Error while refreshing roles");
+      setIsRefetching(false);
     }
   };
 
@@ -864,7 +875,7 @@ const DiscordPopup = ({
                   </div>
                   <button
                     onClick={triggerRefetchRoles}
-                    className="bg-black text-white px-4 h-8 rounded-lg flex items-center "
+                    className="bg-black text-white px-4 h-8 rounded-lg flex items-center hover:bg-[#58595f] transition-all duration-300 "
                   >
                     <svg
                       className="w-5 mr-1"
@@ -876,7 +887,7 @@ const DiscordPopup = ({
                         d="M5.1 16.05q-.55-.95-.825-1.95T4 12.05q0-3.35 2.325-5.7T12 4h.175l-1.6-1.6l1.4-1.4l4 4l-4 4l-1.4-1.4l1.6-1.6H12Q9.5 6 7.75 7.763T6 12.05q0 .65.15 1.275t.45 1.225zM12.025 23l-4-4l4-4l1.4 1.4l-1.6 1.6H12q2.5 0 4.25-1.763T18 11.95q0-.65-.15-1.275T17.4 9.45l1.5-1.5q.55.95.825 1.95T20 11.95q0 3.35-2.325 5.7T12 20h-.175l1.6 1.6z"
                       />
                     </svg>
-                    <p>Refetch Roles</p>
+                    <p>{isRefetching ? "Fetching…" : "Refetch Roles"}</p>
                   </button>
                 </div>
                 <div className="border rounded-md h-96 w-full flex items-center justify-center overflow-hidden bg-[#32333A]">
@@ -911,10 +922,10 @@ const DiscordPopup = ({
                 <div className="border w-full mt-2 p-1 rounded-md overflow-y-auto h-28 scroll-smooth">
                   {roles.length > 0 ? (
                     <div>
-                      {roles?.map((role) => {
+                      {roles?.map((role, key) => {
                         return (
                           <div
-                            key={role.id}
+                            key={key}
                             className="flex items-center justify-between p-1 border border-white rounded hover:bg-[#F2F3F4] hover:border-[#d8d9da] transition-all duration-200 "
                           >
                             <p>{role.name}</p>
@@ -941,16 +952,16 @@ const DiscordPopup = ({
             )}
 
             <div className="grid grid-cols-10 gap-x-2 items-center mt-3">
-              <div className="col-span-8 gap-x-2 border border-[#7F7F7F] h-10 items-center flex text-lg p-1 rounded px-2 w-full">
+              <div className="col-span-10 gap-x-2 border border-[#7F7F7F] h-10 items-center flex text-lg p-1 rounded px-2 w-full">
                 <p className="font-medium col-span-2">Connected Server: </p>
                 <p> {discordServerName}</p>
               </div>
-              <Button
+              {/* <Button
                 onClick={CreateDiscordProduct}
                 className="col-span-2 border border-black w-full z-10 shadow-xl text-white bg-black rounded-lg  h-10"
               >
                 SAVE PROGRESS
-              </Button>
+              </Button> */}
             </div>
 
             {/* <div className=" mt-2 p-4 flex items-center justify-center rounded-lg border relative w-full h-96 bg-black bg-opacity-65">
@@ -982,7 +993,7 @@ const DiscordPopup = ({
               <p className="col-span-8 border px-2 h-8 items-center flex rounded-lg border-[#9a9999]">
                 {discordServerName}
               </p>
-              <div className="border border-red-600 w-fit px-3 rounded-lg text-red-600 font-medium col-span-2 flex items-center gap-1">
+              <div className="border cursor-pointer border-red-600 w-fit px-3 rounded-lg text-red-600 font-medium col-span-2 flex items-center gap-1 hover:bg-red-300 transition-all duration-300">
                 <svg
                   className="w-4"
                   xmlns="http://www.w3.org/2000/svg"
