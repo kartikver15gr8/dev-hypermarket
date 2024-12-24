@@ -16,6 +16,8 @@ import Link from "next/link";
 import { discordAccessToken } from "@/store/atom/discordAccessToken";
 import { toast } from "sonner";
 import { RoleSchema } from "@/lib/models";
+import spinnerLoader from "@/public/loaders/spinnerthree.svg";
+import spinningLoader from "@/public/loaders/spinningloader.svg";
 
 const uploadcarekey = process.env.NEXT_PUBLIC_UPLOADCARE_KEY || "";
 
@@ -321,7 +323,7 @@ function ProductUploadContent() {
       {/* <ProductDescription /> */}
 
       {/* <Content /> */}
-      <div className="mt-4 p-4 rounded-xl border bg-white">
+      <div className="mt-4 p-4 rounded-xl border border-[#DBDAD8] bg-white">
         <p className="mb-2">What&apos;s Included</p>
         <div className="grid grid-cols-1 gap-y-2 md:gap-y-0 md:grid-cols-2 gap-x-4 mt-4">
           <div>
@@ -349,7 +351,7 @@ function ProductUploadContent() {
                 className={
                   discordGuildId && discordServerName
                     ? "border border-[#4B6161] bg-[#d9faf2] rounded-lg h-24 flex items-center px-2 gap-x-3 hover:bg-[#E4E4E5] transition-all duration-300"
-                    : "border rounded-lg h-24 flex items-center px-2 gap-x-3 hover:bg-[#E4E4E5] transition-all duration-300"
+                    : "border border-[#DBDAD8] rounded-lg h-24 flex items-center px-2 gap-x-3 hover:bg-[#E4E4E5] transition-all duration-300"
                 }
               >
                 <Image
@@ -382,12 +384,14 @@ function ProductUploadContent() {
                 privyAccess={privyAccessToken}
                 product_id={discordProductId ? discordProductId : "djfk"}
                 CreateDiscordProduct={createDiscordCall}
+                setDiscordGuildId={setDiscordGuildId}
+                setDiscordServerName={setDiscordServerName}
               />
             )}
           </>
           <>
             <div
-              className="border rounded-lg h-24 flex items-center hover:bg-[#E4E4E5] transition-all duration-300 justify-between cursor-pointer"
+              className="border border-[#DBDAD8] rounded-lg h-24 flex items-center hover:bg-[#E4E4E5] transition-all duration-300 justify-between cursor-pointer"
               onClick={handleCardClick}
             >
               <div className="flex items-center px-2 gap-x-3">
@@ -410,7 +414,7 @@ function ProductUploadContent() {
             </div>
 
             {isPopupOpen && (
-              <TokenPopup
+              <TelegramPopup
                 onClose={handleClosePopup}
                 onGenerate={generateTelegramVerificationToken}
                 onCopy={copyTeleToken}
@@ -423,8 +427,8 @@ function ProductUploadContent() {
 
         <p className="text-[15px] md:text-lg mb-4 mt-4">Upload Content</p>
         <div className=" grid grid-cols-1 gap-x-5 rounded-md h-48">
-          <div className="border rounded-md">
-            <div className="h-10 p-2 border-b bg-slate-200">
+          <div className="border border-[#DBDAD8] rounded-md">
+            <div className="h-10 p-2 border-b bg-[#ECECEF] border-[#DBDAD8]">
               <p>Content Being Bought</p>
             </div>
             <div className="flex flex-col items-center justify-center h-36">
@@ -456,7 +460,7 @@ function ProductUploadContent() {
           className="rounded w-28 md:w-32 lg:w-36 text-xs md:text-sm"
           disabled={!discordGuildId ? true : false}
         >
-          DONE
+          FINISH
         </Button>
       </div>
     </div>
@@ -509,7 +513,7 @@ const Topbar = () => {
   );
 };
 
-const TokenPopup = ({
+const TelegramPopup = ({
   onClose,
   onGenerate,
   onCopy,
@@ -550,8 +554,8 @@ const TokenPopup = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
-      <div className="bg-white rounded-xl p-5 shadow-lg w-[700px]">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 backdrop-blur-sm">
+      <div className="bg-white rounded-xl p-5 shadow-lg w-[700px] shadow-[#616368]">
         <div className="flex justify-between items-center">
           <div className="flex gap-x-2 items-center">
             <Image
@@ -563,18 +567,23 @@ const TokenPopup = ({
             />
             <h2 className="text-lg font-semibold">Connect Your Telegram</h2>
           </div>
-          <button onClick={onClose} className="">
-            <svg
-              className="w-7 hover:rotate-180 transition-all duration-300"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="black"
-                d="m8.4 16.308l3.6-3.6l3.6 3.6l.708-.708l-3.6-3.6l3.6-3.6l-.708-.708l-3.6 3.6l-3.6-3.6l-.708.708l3.6 3.6l-3.6 3.6zM12.003 21q-1.866 0-3.51-.708q-1.643-.709-2.859-1.924t-1.925-2.856T3 12.003t.709-3.51Q4.417 6.85 5.63 5.634t2.857-1.925T11.997 3t3.51.709q1.643.708 2.859 1.922t1.925 2.857t.709 3.509t-.708 3.51t-1.924 2.859t-2.856 1.925t-3.509.709M12 20q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8"
-              />
-            </svg>
-          </button>
+          <div className="flex gap-x-2 items-center">
+            <button className="border border-[#c0c0c0] bg-white px-2 text-sm h-8 rounded-lg hover:bg-[#4E6465] hover:text-white transition-all duration-200">
+              Watch Tutorial Video
+            </button>
+            <button onClick={onClose} className="">
+              <svg
+                className="w-7 hover:rotate-180 transition-all duration-300"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="black"
+                  d="m8.4 16.308l3.6-3.6l3.6 3.6l.708-.708l-3.6-3.6l3.6-3.6l-.708-.708l-3.6 3.6l-3.6-3.6l-.708.708l3.6 3.6l-3.6 3.6zM12.003 21q-1.866 0-3.51-.708q-1.643-.709-2.859-1.924t-1.925-2.856T3 12.003t.709-3.51Q4.417 6.85 5.63 5.634t2.857-1.925T11.997 3t3.51.709q1.643.708 2.859 1.922t1.925 2.857t.709 3.509t-.708 3.51t-1.924 2.859t-2.856 1.925t-3.509.709M12 20q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
         <div className="mt-4 border rounded-xl ">
           <div className="rounded-t-xl border-b flex items-center h-12 px-4 bg-[#f2f3f4] justify-between">
@@ -582,9 +591,13 @@ const TokenPopup = ({
               <h1 className="font-medium text-lg">Step 1:</h1>
               <p className="">Add Sendit Bot to your Telegram</p>
             </div>
-            <button className="border border-[#c0c0c0] bg-white px-2 text-sm h-8 rounded-lg hover:bg-[#4E6465] hover:text-white transition-all duration-200">
-              Watch Tutorial Video
-            </button>
+            <a
+              href="https://t.me/sendit_markets_bot"
+              target="_blank"
+              className="border flex items-center border-[#c0c0c0] bg-white px-2 text-sm h-8 rounded-lg hover:bg-[#4E6465] hover:text-white transition-all duration-200"
+            >
+              Click here to get Telegram bot
+            </a>
           </div>
 
           <div className="border-b p-2 flex justify-center px-4 flex-col h-20">
@@ -612,6 +625,10 @@ const TokenPopup = ({
               <li>Generate the code by clicking on the generate button</li>
               <li>
                 Paste it in your channel/group once the Sendit Bot is added
+              </li>
+              <li>
+                Once you have pasted the code in your group, click on the verify
+                button down below.
               </li>
             </ul>
 
@@ -671,6 +688,8 @@ const DiscordPopup = ({
   privyAccess,
   product_id,
   CreateDiscordProduct,
+  setDiscordGuildId,
+  setDiscordServerName,
 }: {
   onClose: any;
   discordServerName: string;
@@ -679,6 +698,8 @@ const DiscordPopup = ({
   privyAccess: string;
   product_id: string;
   CreateDiscordProduct: () => Promise<{ rowId: string } | void>;
+  setDiscordServerName: React.Dispatch<React.SetStateAction<string>>;
+  setDiscordGuildId: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const [tabOpen, setTabOpen] = useState<"roles" | "settings">("roles");
   const [roles, setRoles] = useState<RoleSchema[]>([]);
@@ -686,6 +707,12 @@ const DiscordPopup = ({
   const [selectedOption, setSelectedOption] = useState("No Action");
 
   const options = ["No Action", "Remove Role", "Kick User", "Remove All Users"];
+
+  const handleDisconnectDiscord = () => {
+    setDiscordGuildId("");
+    setDiscordServerName("");
+    toast.info("Discord Disconnected!");
+  };
 
   const refetchRoles = async () => {
     const productId = localStorage.getItem("PRODUCT_ID");
@@ -800,8 +827,8 @@ const DiscordPopup = ({
   }, [guildId]);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
-      <div className="bg-white rounded-xl p-5 shadow-lg w-[850px]">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-10">
+      <div className="bg-white rounded-xl p-5 shadow-lg w-[850px] shadow-[#616368]">
         <div className="flex justify-between items-center">
           <div className="flex gap-x-2 items-center">
             <Image
@@ -868,18 +895,22 @@ const DiscordPopup = ({
                   </div>
                   <button
                     onClick={triggerRefetchRoles}
-                    className="bg-black text-white px-4 h-8 rounded-lg flex items-center hover:bg-[#58595f] transition-all duration-300 "
+                    className="text-black px-4 h-8 rounded-lg flex items-center hover:bg-[#DBDAD8] transition-all duration-300 "
                   >
-                    <svg
-                      className="w-5 mr-1"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        fill="white"
-                        d="M5.1 16.05q-.55-.95-.825-1.95T4 12.05q0-3.35 2.325-5.7T12 4h.175l-1.6-1.6l1.4-1.4l4 4l-4 4l-1.4-1.4l1.6-1.6H12Q9.5 6 7.75 7.763T6 12.05q0 .65.15 1.275t.45 1.225zM12.025 23l-4-4l4-4l1.4 1.4l-1.6 1.6H12q2.5 0 4.25-1.763T18 11.95q0-.65-.15-1.275T17.4 9.45l1.5-1.5q.55.95.825 1.95T20 11.95q0 3.35-2.325 5.7T12 20h-.175l1.6 1.6z"
-                      />
-                    </svg>
+                    {isRefetching ? (
+                      <Image className="w-6" src={spinningLoader} alt="" />
+                    ) : (
+                      <svg
+                        className="w-5 mr-1"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="black"
+                          d="M5.1 16.05q-.55-.95-.825-1.95T4 12.05q0-3.35 2.325-5.7T12 4h.175l-1.6-1.6l1.4-1.4l4 4l-4 4l-1.4-1.4l1.6-1.6H12Q9.5 6 7.75 7.763T6 12.05q0 .65.15 1.275t.45 1.225zM12.025 23l-4-4l4-4l1.4 1.4l-1.6 1.6H12q2.5 0 4.25-1.763T18 11.95q0-.65-.15-1.275T17.4 9.45l1.5-1.5q.55.95.825 1.95T20 11.95q0 3.35-2.325 5.7T12 20h-.175l1.6 1.6z"
+                        />
+                      </svg>
+                    )}
                     <p>{isRefetching ? "Fetching…" : "Refetch Roles"}</p>
                   </button>
                 </div>
@@ -892,41 +923,45 @@ const DiscordPopup = ({
                 </div>
               </>
             ) : (
-              <div className="mb-3 font-medium text-[#5e5e5e]">
+              <div className="mb-3 font-medium text-[#60646E]">
                 <div className="flex justify-between">
                   <p>Available Roles</p>
                   <button
                     onClick={triggerRefetchRoles}
-                    className="bg-black text-white px-4 h-8 rounded-lg flex items-center "
+                    className="text-black px-4 h-8 rounded-lg flex items-center hover:bg-[#DBDAD8] transition-all duration-300 "
                   >
-                    <svg
-                      className="w-5 mr-1"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        fill="white"
-                        d="M5.1 16.05q-.55-.95-.825-1.95T4 12.05q0-3.35 2.325-5.7T12 4h.175l-1.6-1.6l1.4-1.4l4 4l-4 4l-1.4-1.4l1.6-1.6H12Q9.5 6 7.75 7.763T6 12.05q0 .65.15 1.275t.45 1.225zM12.025 23l-4-4l4-4l1.4 1.4l-1.6 1.6H12q2.5 0 4.25-1.763T18 11.95q0-.65-.15-1.275T17.4 9.45l1.5-1.5q.55.95.825 1.95T20 11.95q0 3.35-2.325 5.7T12 20h-.175l1.6 1.6z"
-                      />
-                    </svg>
-                    <p>Refetch Roles</p>
+                    {isRefetching ? (
+                      <Image className="w-6" src={spinningLoader} alt="" />
+                    ) : (
+                      <svg
+                        className="w-5 mr-1"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="black"
+                          d="M5.1 16.05q-.55-.95-.825-1.95T4 12.05q0-3.35 2.325-5.7T12 4h.175l-1.6-1.6l1.4-1.4l4 4l-4 4l-1.4-1.4l1.6-1.6H12Q9.5 6 7.75 7.763T6 12.05q0 .65.15 1.275t.45 1.225zM12.025 23l-4-4l4-4l1.4 1.4l-1.6 1.6H12q2.5 0 4.25-1.763T18 11.95q0-.65-.15-1.275T17.4 9.45l1.5-1.5q.55.95.825 1.95T20 11.95q0 3.35-2.325 5.7T12 20h-.175l1.6 1.6z"
+                        />
+                      </svg>
+                    )}
+                    <p>{isRefetching ? "Fetching…" : "Refetch Roles"}</p>
                   </button>
                 </div>
-                <div className="border w-full mt-2 p-1 rounded-md overflow-y-auto h-28 scroll-smooth">
+                <div className="border w-full mt-2 p-1 rounded-md overflow-y-auto h-52 scroll-smooth">
                   {roles.length > 0 ? (
                     <div>
                       {roles?.map((role, key) => {
                         return (
                           <div
                             key={key}
-                            className="flex items-center justify-between p-1 border border-white rounded hover:bg-[#F2F3F4] hover:border-[#d8d9da] transition-all duration-200 "
+                            className="border-b px-2 flex items-center justify-between p-1 h-12 hover:bg-[#F2F3F4] hover:rounded hover:border-[#d8d9da] transition-all duration-200 "
                           >
                             <p>{role.name}</p>
                             <button
                               onClick={() =>
                                 handleAddRole(role.id, role.name, true)
                               }
-                              className="border px-2 rounded bg-black text-white"
+                              className="border w-24 h-8 rounded-lg bg-[#ECECEF] text-[#60646E] border-[#60646E] hover:bg-[#44698b] hover:text-white transition-all duration-300"
                               disabled={loading}
                             >
                               {loading ? "Adding..." : "Add Role"}
@@ -936,7 +971,7 @@ const DiscordPopup = ({
                       })}
                     </div>
                   ) : (
-                    <div className=" flex items-center justify-between text-black p-1 border border-white rounded hover:bg-[#F2F3F4] hover:border-[#d8d9da] transition-all duration-200 ">
+                    <div className="border-b px-2 flex items-center justify-between p-1 h-12    hover:bg-[#F2F3F4] hover:rounded hover:border-[#d8d9da] transition-all duration-200 ">
                       <p> No Roles Fetched!</p>
                     </div>
                   )}
@@ -951,7 +986,7 @@ const DiscordPopup = ({
               </div>
               <Button
                 onClick={CreateDiscordProduct}
-                className="col-span-2 border border-black w-full z-10 shadow-xl text-white bg-black rounded-lg  h-10"
+                className="col-span-2 border border-black w-full z-10 shadow-xl text-white bg-black rounded-md  h-10"
               >
                 SAVE PROGRESS
               </Button>
@@ -986,7 +1021,10 @@ const DiscordPopup = ({
               <p className="col-span-8 border px-2 h-8 items-center flex rounded-lg border-[#9a9999]">
                 {discordServerName}
               </p>
-              <div className="border cursor-pointer border-red-600 w-fit px-3 rounded-lg text-red-600 font-medium col-span-2 flex items-center gap-1 hover:bg-red-300 transition-all duration-300">
+              <div
+                onClick={handleDisconnectDiscord}
+                className="border cursor-pointer border-red-600 w-fit px-3 rounded-lg text-red-600 font-medium col-span-2 flex items-center gap-1 hover:bg-red-300 transition-all duration-300"
+              >
                 <svg
                   className="w-4"
                   xmlns="http://www.w3.org/2000/svg"
@@ -1005,7 +1043,7 @@ const DiscordPopup = ({
               Event Log Channels
             </p>
 
-            <div className="border flex items-center gap-x-1  w-fit px-2 rounded-lg h-9 bg-[#F2F3F4] border-[#9a9999]">
+            <div className="cursor-pointer border flex items-center gap-x-1  w-fit px-2 rounded-lg h-9 bg-[#F2F3F4] border-[#9a9999]">
               <svg
                 className="w-4"
                 xmlns="http://www.w3.org/2000/svg"
@@ -1018,11 +1056,11 @@ const DiscordPopup = ({
               </svg>
               <p>Add channels</p>
             </div>
-            <p className="mt-5 mb-3 font-medium text-[#5e5e5e]">
+            {/* <p className="mt-5 mb-3 font-medium text-[#5e5e5e]">
               Assign this role after past due bills
-            </p>
+            </p> */}
 
-            <div className="border flex items-center gap-x-1 w-fit px-3 rounded-lg h-9 bg-[#F2F3F4] border-[#9a9999]">
+            {/* <div className="border flex items-center gap-x-1 w-fit px-3 rounded-lg h-9 bg-[#F2F3F4] border-[#9a9999]">
               <svg
                 className="w-5"
                 xmlns="http://www.w3.org/2000/svg"
@@ -1034,7 +1072,7 @@ const DiscordPopup = ({
                 />
               </svg>
               <p>Select Roles</p>
-            </div>
+            </div> */}
           </div>
         )}
       </div>
