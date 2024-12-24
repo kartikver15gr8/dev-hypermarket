@@ -210,12 +210,6 @@ function ProductUploadContent() {
     }
   };
 
-  useEffect(() => {
-    if (discordGuildId && discordServerName) {
-      createDiscordCall();
-    }
-  }, []);
-
   const [discord_access_token, setDiscordAccessToken] =
     useRecoilState(discordAccessToken);
   const setAaccess = useSetRecoilState(discordAccessToken);
@@ -422,7 +416,6 @@ function ProductUploadContent() {
                 onCopy={copyTeleToken}
                 telegramCode={telegramVerificationToken}
                 privyAccess={privyAccessToken}
-                productId={"9990f0e3-9371-41fc-882c-cec213580ff1"}
               />
             )}
           </>
@@ -521,21 +514,20 @@ const TokenPopup = ({
   onGenerate,
   onCopy,
   telegramCode,
-  productId,
   privyAccess,
 }: {
   onClose: any;
   onGenerate: any;
   onCopy: any;
   telegramCode: string;
-  productId: string;
   privyAccess: string;
 }) => {
   const verificationToken = localStorage.getItem("TeleToken");
   const verifyTelegram = async () => {
+    const PRODUCT_ID = localStorage.getItem("PRODUCT_ID");
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/telegram/${productId}/channels`,
+        `${process.env.NEXT_PUBLIC_SWAGGER_API_V2}/admin/telegram/${PRODUCT_ID}/channels`,
         {
           params: {
             verification_code: verificationToken,
@@ -547,8 +539,9 @@ const TokenPopup = ({
           },
         }
       );
-      console.log(response.data);
-      toast.info(response.data);
+      if (response.data) {
+        toast.info("Channel Verified");
+      }
     } catch (err) {
       console.error("Error fetching data:", err);
       //@ts-ignore
@@ -952,16 +945,16 @@ const DiscordPopup = ({
             )}
 
             <div className="grid grid-cols-10 gap-x-2 items-center mt-3">
-              <div className="col-span-10 gap-x-2 border border-[#7F7F7F] h-10 items-center flex text-lg p-1 rounded px-2 w-full">
+              <div className="col-span-8 gap-x-2 border border-[#7F7F7F] h-10 items-center flex text-lg p-1 rounded px-2 w-full">
                 <p className="font-medium col-span-2">Connected Server: </p>
                 <p> {discordServerName}</p>
               </div>
-              {/* <Button
+              <Button
                 onClick={CreateDiscordProduct}
                 className="col-span-2 border border-black w-full z-10 shadow-xl text-white bg-black rounded-lg  h-10"
               >
                 SAVE PROGRESS
-              </Button> */}
+              </Button>
             </div>
 
             {/* <div className=" mt-2 p-4 flex items-center justify-center rounded-lg border relative w-full h-96 bg-black bg-opacity-65">
