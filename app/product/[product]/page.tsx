@@ -85,6 +85,7 @@ export default function Product({ params }: any) {
           checksum={productById.FileChecksum}
           fileSize={productById.FileSize}
           sellerAddress={productById.seller_wallet_address}
+          isSubscription={true}
         />
       )}
       {productById && (
@@ -109,6 +110,7 @@ const ProductDetails = ({
   fileName,
   checksum,
   sellerAddress,
+  isSubscription,
 }: {
   bannerImg: string;
   productName: string;
@@ -119,6 +121,7 @@ const ProductDetails = ({
   fileName?: string;
   checksum: string;
   sellerAddress: string;
+  isSubscription: boolean;
 }) => {
   return (
     <div className="">
@@ -172,74 +175,94 @@ const ProductDetails = ({
             </div>
           </div>
 
-          <div className="flex flex-col my-4 gap-y-1 text-sm md:text-[15px]">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-x-1">
-                <svg
-                  width="12"
-                  height="16"
-                  viewBox="0 0 12 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M7.33366 7.33337H3.33366M4.66699 10H3.33366M8.66699 4.66671H3.33366M11.3337 4.53337V11.4667C11.3337 12.5868 11.3337 13.1469 11.1157 13.5747C10.9239 13.951 10.618 14.257 10.2416 14.4487C9.81382 14.6667 9.25376 14.6667 8.13366 14.6667H3.86699C2.74689 14.6667 2.18683 14.6667 1.75901 14.4487C1.38269 14.257 1.07673 13.951 0.884979 13.5747C0.666992 13.1469 0.666992 12.5868 0.666992 11.4667V4.53337C0.666992 3.41327 0.666992 2.85322 0.884979 2.42539C1.07673 2.04907 1.38269 1.74311 1.75901 1.55136C2.18683 1.33337 2.74689 1.33337 3.86699 1.33337H8.13366C9.25376 1.33337 9.81382 1.33337 10.2416 1.55136C10.618 1.74311 10.9239 2.04907 11.1157 2.42539C11.3337 2.85322 11.3337 3.41327 11.3337 4.53337Z"
-                    stroke="#8B8B92"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+          {isSubscription == false ? (
+            <div className="flex flex-col my-4 gap-y-1 text-sm md:text-[15px]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-x-1">
+                  <svg
+                    width="12"
+                    height="16"
+                    viewBox="0 0 12 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M7.33366 7.33337H3.33366M4.66699 10H3.33366M8.66699 4.66671H3.33366M11.3337 4.53337V11.4667C11.3337 12.5868 11.3337 13.1469 11.1157 13.5747C10.9239 13.951 10.618 14.257 10.2416 14.4487C9.81382 14.6667 9.25376 14.6667 8.13366 14.6667H3.86699C2.74689 14.6667 2.18683 14.6667 1.75901 14.4487C1.38269 14.257 1.07673 13.951 0.884979 13.5747C0.666992 13.1469 0.666992 12.5868 0.666992 11.4667V4.53337C0.666992 3.41327 0.666992 2.85322 0.884979 2.42539C1.07673 2.04907 1.38269 1.74311 1.75901 1.55136C2.18683 1.33337 2.74689 1.33337 3.86699 1.33337H8.13366C9.25376 1.33337 9.81382 1.33337 10.2416 1.55136C10.618 1.74311 10.9239 2.04907 11.1157 2.42539C11.3337 2.85322 11.3337 3.41327 11.3337 4.53337Z"
+                      stroke="#8B8B92"
+                      strokeWidth="1.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
 
-                <p>Checksum</p>
+                  <p>Checksum</p>
+                </div>
+                {/* <p>{`${checksum.slice(0, 4)}...${checksum.slice(-4)}`}</p> */}
               </div>
-              {/* <p>{`${checksum.slice(0, 4)}...${checksum.slice(-4)}`}</p> */}
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-x-1">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 14 14"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M7.47203 11.2427L6.52922 12.1855C5.22748 13.4872 3.11693 13.4872 1.81518 12.1855C0.51343 10.8837 0.51343 8.77317 1.81518 7.47142L2.75799 6.52861M11.2433 7.47142L12.1861 6.52861C13.4878 5.22686 13.4878 3.11632 12.1861 1.81457C10.8843 0.51282 8.77378 0.51282 7.47203 1.81457L6.52922 2.75738M4.66729 9.33334L9.33396 4.66667"
-                    stroke="#8B8B92"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-x-1">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 14 14"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M7.47203 11.2427L6.52922 12.1855C5.22748 13.4872 3.11693 13.4872 1.81518 12.1855C0.51343 10.8837 0.51343 8.77317 1.81518 7.47142L2.75799 6.52861M11.2433 7.47142L12.1861 6.52861C13.4878 5.22686 13.4878 3.11632 12.1861 1.81457C10.8843 0.51282 8.77378 0.51282 7.47203 1.81457L6.52922 2.75738M4.66729 9.33334L9.33396 4.66667"
+                      stroke="#8B8B92"
+                      strokeWidth="1.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
 
-                <p>File size</p>
+                  <p>File size</p>
+                </div>
+                <p>{fileSize} MB</p>
               </div>
-              <p>{fileSize} MB</p>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-x-1">
-                <svg
-                  width="16"
-                  height="14"
-                  viewBox="0 0 16 14"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M8.66634 3.66667L7.92265 2.17928C7.70861 1.7512 7.60158 1.53715 7.44192 1.38078C7.30073 1.24249 7.13056 1.13732 6.94372 1.07287C6.73245 1 6.49315 1 6.01454 1H3.46634C2.7196 1 2.34624 1 2.06102 1.14532C1.81014 1.27316 1.60616 1.47713 1.47833 1.72801C1.33301 2.01323 1.33301 2.3866 1.33301 3.13333V3.66667M1.33301 3.66667H11.4663C12.5864 3.66667 13.1465 3.66667 13.5743 3.88465C13.9506 4.0764 14.2566 4.38236 14.4484 4.75869C14.6663 5.18651 14.6663 5.74656 14.6663 6.86667V9.8C14.6663 10.9201 14.6663 11.4802 14.4484 11.908C14.2566 12.2843 13.9506 12.5903 13.5743 12.782C13.1465 13 12.5864 13 11.4663 13H4.53301C3.4129 13 2.85285 13 2.42503 12.782C2.0487 12.5903 1.74274 12.2843 1.55099 11.908C1.33301 11.4802 1.33301 10.9201 1.33301 9.8V3.66667Z"
-                    stroke="#8B8B92"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-x-1">
+                  <svg
+                    width="16"
+                    height="14"
+                    viewBox="0 0 16 14"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M8.66634 3.66667L7.92265 2.17928C7.70861 1.7512 7.60158 1.53715 7.44192 1.38078C7.30073 1.24249 7.13056 1.13732 6.94372 1.07287C6.73245 1 6.49315 1 6.01454 1H3.46634C2.7196 1 2.34624 1 2.06102 1.14532C1.81014 1.27316 1.60616 1.47713 1.47833 1.72801C1.33301 2.01323 1.33301 2.3866 1.33301 3.13333V3.66667M1.33301 3.66667H11.4663C12.5864 3.66667 13.1465 3.66667 13.5743 3.88465C13.9506 4.0764 14.2566 4.38236 14.4484 4.75869C14.6663 5.18651 14.6663 5.74656 14.6663 6.86667V9.8C14.6663 10.9201 14.6663 11.4802 14.4484 11.908C14.2566 12.2843 13.9506 12.5903 13.5743 12.782C13.1465 13 12.5864 13 11.4663 13H4.53301C3.4129 13 2.85285 13 2.42503 12.782C2.0487 12.5903 1.74274 12.2843 1.55099 11.908C1.33301 11.4802 1.33301 10.9201 1.33301 9.8V3.66667Z"
+                      stroke="#8B8B92"
+                      strokeWidth="1.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
 
-                <p>Files Included</p>
+                  <p>Files Included</p>
+                </div>
+                <p>To be added</p>
               </div>
-              <p>To be added</p>
             </div>
-          </div>
+          ) : (
+            <div className="my-3 ">
+              <p>Subscription Duration</p>
+              <div className="grid grid-cols-3 gap-x-3 mt-1">
+                <div className="py-2 px-3 border rounded-md border-[#EBEBEB] flex flex-col justify-center">
+                  <p className="font-medium">3 Month Access</p>
+                  <p className="text-[#75757E]">$price</p>
+                </div>
+                <div className="py-2 px-3 border rounded-md border-[#EBEBEB] flex flex-col justify-center">
+                  <p className="font-medium">6 Month Access</p>
+                  <p className="text-[#75757E]">$price</p>
+                </div>
+                <div className="py-2 px-3 border rounded-md border-[#EBEBEB] flex flex-col justify-center">
+                  <p className="font-medium">Annual Access</p>
+                  <p className="text-[#75757E]">$price</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="mt-1">
             {/* <p className="text-xs md:text-[12px] font-medium">Make a price:</p> */}

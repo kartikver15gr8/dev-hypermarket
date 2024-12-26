@@ -58,6 +58,21 @@ export default function AddProduct() {
   const [userId, setUserId] = useState(0);
   const [privyAccessToken, setPrivyAccessToken] = useState("");
   const [productId, setProductId] = useState("");
+  const [isSubscription, setIsSubscription] = useState(false);
+  const [threeMonthSubsPrice, setThreeMonthSubsPrice] = useState("");
+  const [sixMonthSubsPrice, setSixMonthSubsPrice] = useState("");
+  const [annualSubsPrice, setAnnualSubsPrice] = useState("");
+
+  const [link, setLink] = useState("");
+
+  const [appsPanelVisibility, setAppsPanelVisibility] = useState(false);
+  const [whatsIncluded, setWhatsIncluded] = useState<
+    "digital-assets" | "private-groups" | "links"
+  >("digital-assets");
+
+  const togglePricingModel = () => {
+    setIsSubscription(!isSubscription);
+  };
 
   const fetchCategories = async () => {
     try {
@@ -131,6 +146,7 @@ export default function AddProduct() {
       );
       setProductId(response.data.rowId);
       localStorage.setItem("PRODUCT_ID", response.data.rowId);
+      setAppsPanelVisibility(true);
       return response.data;
     } catch (error) {
       console.log(`You got an error: ${error}`);
@@ -252,56 +268,117 @@ export default function AddProduct() {
         )}
       </div>
       {/* <Pricing /> */}
+
       <div className="mt-4 p-4 rounded-xl border bg-white">
-        <p className="text-lg mb-4">Pricing</p>
-        <div className="grid grid-cols-2 gap-x-6">
-          <div>
-            <p className="text-xs mb-1">Buy Now Price</p>
-            <div className="border rounded flex justify-between h-12">
-              <input
-                className="flex p-2 items-center rounded-l  outline-none"
-                type="text"
-                placeholder="Enter buy now price"
-                onChange={(e) => {
-                  setPrice(e.target.value);
-                }}
-              />
-              <div className="flex items-center justify-center bg-slate-300 rounded-r w-12 h-12">
-                <p>$</p>
-              </div>
-            </div>
-          </div>
-          <div>
-            <p className="text-xs mb-1">Compare Price</p>
-            <div className="border rounded flex justify-between h-12">
-              <input
-                className="flex p-2 items-center rounded-l  outline-none"
-                type="text"
-                placeholder="Enter Limit"
-                onChange={(e) => {
-                  setComparePrice(e.target.value);
-                }}
-              />
-              <div className="flex items-center justify-center bg-slate-300 rounded-r w-12 h-12">
-                <svg
-                  width="8"
-                  height="12"
-                  viewBox="0 0 8 12"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M0.667969 7.99984L4.0013 11.3332L7.33464 7.99984M0.667969 3.99984L4.0013 0.666504L7.33464 3.99984"
-                    stroke="black"
-                    strokeWidth="1.33333"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
+        {/* Toggle Button */}
+        <div className="mb-4 flex justify-between items-center ">
+          <p className="text-lg">Pricing</p>
+          <button
+            onClick={togglePricingModel}
+            className={`px-4 py-2 rounded-lg ${
+              isSubscription
+                ? "bg-[#4B6161] hover:bg-[#658282] transition-all duration-300 text-white"
+                : "bg-[#ECECEF] hover:bg-[#c9c9c9] transition-all duration-300 text-black"
+            }`}
+          >
+            {isSubscription
+              ? "Switch to Fixed Pricing"
+              : "Switch to Subscription"}
+          </button>
         </div>
+
+        {/* Pricing Inputs */}
+        {isSubscription ? (
+          <div className="grid grid-cols-3 gap-x-4">
+            <div>
+              <p className="text-xs mb-1">3 Month Subscription</p>
+              <div className="border rounded flex justify-between h-12">
+                <input
+                  className="flex p-2 items-center rounded-l outline-none"
+                  type="text"
+                  placeholder="Enter price"
+                  onChange={(e) => setThreeMonthSubsPrice(e.target.value)}
+                />
+                <div className="flex items-center justify-center bg-[#ECECEF] rounded-r w-12 h-12">
+                  <p>$</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs mb-1">6 Month Subscription</p>
+              <div className="border rounded flex justify-between h-12">
+                <input
+                  className="flex p-2 items-center rounded-l outline-none"
+                  type="text"
+                  placeholder="Enter price"
+                  onChange={(e) => setSixMonthSubsPrice(e.target.value)}
+                />
+                <div className="flex items-center justify-center bg-[#ECECEF] rounded-r w-12 h-12">
+                  <p>$</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs mb-1">1 Year Subscription</p>
+              <div className="border rounded flex justify-between h-12">
+                <input
+                  className="flex p-2 items-center rounded-l outline-none"
+                  type="text"
+                  placeholder="Enter price"
+                  onChange={(e) => setAnnualSubsPrice(e.target.value)}
+                />
+                <div className="flex items-center justify-center bg-[#ECECEF] rounded-r w-12 h-12">
+                  <p>$</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-x-6">
+            <div>
+              <p className="text-xs mb-1">Buy Now Price</p>
+              <div className="border rounded flex justify-between h-12">
+                <input
+                  className="flex p-2 items-center rounded-l outline-none"
+                  type="text"
+                  placeholder="Enter buy now price"
+                  onChange={(e) => setPrice(e.target.value)}
+                />
+                <div className="flex items-center justify-center bg-[#ECECEF] rounded-r w-12 h-12">
+                  <p>$</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs mb-1">Compare Price</p>
+              <div className="border rounded flex justify-between h-12">
+                <input
+                  className="flex p-2 items-center rounded-l outline-none"
+                  type="text"
+                  placeholder="Enter Limit"
+                  onChange={(e) => setComparePrice(e.target.value)}
+                />
+                <div className="flex items-center justify-center bg-[#ECECEF] rounded-r w-12 h-12">
+                  <svg
+                    width="8"
+                    height="12"
+                    viewBox="0 0 8 12"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M0.667969 7.99984L4.0013 11.3332L7.33464 7.99984M0.667969 3.99984L4.0013 0.666504L7.33464 3.99984"
+                      stroke="black"
+                      strokeWidth="1.33333"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
       {/* Subscription Section */}
 
@@ -401,6 +478,126 @@ export default function AddProduct() {
         </Button>
       </div>
       {/* <Content /> */}
+
+      {appsPanelVisibility && (
+        <div className="mt-5 border rounded-xl bg-white p-4">
+          <p>What&apos;s Included</p>
+
+          <div className="grid grid-cols-3 gap-x-4 mt-2 mb-4">
+            <button
+              onClick={() => setWhatsIncluded("private-groups")}
+              className={
+                whatsIncluded == "private-groups"
+                  ? "h-9 rounded-md bg-black text-white"
+                  : "border h-9 rounded-md bg-[#ECECEF] border-[#DBDAD8] hover:bg-[#cbcbca] transition-all duration-300"
+              }
+            >
+              Private Groups
+            </button>
+            <button
+              onClick={() => setWhatsIncluded("digital-assets")}
+              className={
+                whatsIncluded == "digital-assets"
+                  ? "h-9 rounded-md bg-black text-white"
+                  : "border h-9 rounded-md bg-[#ECECEF] border-[#DBDAD8] hover:bg-[#cbcbca] transition-all duration-300"
+              }
+            >
+              Digital Assets
+            </button>
+            <button
+              onClick={() => setWhatsIncluded("links")}
+              className={
+                whatsIncluded == "links"
+                  ? "h-9 rounded-md bg-black text-white"
+                  : "border h-9 rounded-md bg-[#ECECEF] border-[#DBDAD8] hover:bg-[#cbcbca] transition-all duration-300"
+              }
+            >
+              Links
+            </button>
+          </div>
+
+          {whatsIncluded == "digital-assets" && (
+            <div className=" grid grid-cols-1 gap-x-5 rounded-md h-48">
+              <div className="border border-[#DBDAD8] rounded-md">
+                <div className="h-10 p-2 border-b bg-[#ECECEF] border-[#DBDAD8]">
+                  <p>Content Being Bought</p>
+                </div>
+                <div className="flex flex-col items-center justify-center h-36">
+                  <input
+                    className="text-xs sm:text-sm lg:text-[15px]"
+                    type="file"
+                    onChange={handleFileChange}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {whatsIncluded == "private-groups" && (
+            <div className="grid grid-cols-2 gap-x-4">
+              <div className="border border-[#DBDAD8] rounded-lg h-24 flex items-center hover:bg-[#E4E4E5] transition-all duration-300 justify-between cursor-pointer">
+                <div className="flex items-center px-2 gap-x-3">
+                  <Image
+                    className="w-10 md:w-12 lg:w-14"
+                    src="https://s3-alpha-sig.figma.com/img/c89a/0a74/93f942f4f36a009c22adc6177b140086?Expires=1734307200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=LySqO17PCfD1vsF1049b38Kaiu1Q9R2qs4Org2J8QcaXMboKRJw~UPOYINNusCUcG~CxnQMC8sx8viEKNeKomYUGaPd9PVIIpl5eV3HaRTcSAAU6s0YJBISJM7WZsPQg-HPczVxb0-WaFBo2mGpC7OWlJ7g7FrhfmqnoAmdDb~iDOUSvHmcGsXVLtFaoyDkQC6xY1h--kEUHEqKlQ4JnGyocOw4tr3Omw8vFzEIi~F0nE7AchatNLdgF3ys7kOUsfmKhsOzeOItCDu76Pwh-cGndtwVMKyjpSshuZQ8kZF3EVYzjkbDg5xytwANpl7g8aokqwiz5CSQuCbOKqy2ycg__"
+                    width={200}
+                    height={200}
+                    alt=""
+                  />
+                  <div>
+                    <p className="font-medium text-[14px] md:text-[16px] lg:text-lg">
+                      Discord
+                    </p>
+                    <p className="text-[10px] md:text-[11px]">
+                      Offer exclusive access to your private Discord server
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border border-[#DBDAD8] rounded-lg h-24 flex items-center hover:bg-[#E4E4E5] transition-all duration-300 justify-between cursor-pointer">
+                <div className="flex items-center px-2 gap-x-3">
+                  <Image
+                    className="w-10 md:w-12 lg:w-14"
+                    src="https://s3-alpha-sig.figma.com/img/1d2b/bc7f/92849e7867a21edd110a2b0e8a256f6e?Expires=1734307200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=KXCbXmfq1IjfOOzrGJzfWCl9Yl9UNj-SWz-mlmqH5Zfi~0-uKfDEpBVvBiLH-5N276OISTmZBs~v0XbJNwZavOwEKoZxa0S8~8nrh5irCkhsO5eSz62DTQawoVza297qf-ty8lwAUSlsj8yWkU1oHuGdNHqFnIyWju7PNN-P9jDNBrG6MUYJSMwJzG-9lTWqIOyMv3RrOeJf-nUYxIYQcTFYWy~0RPmsJYxUqYVGeH3Ivbjqim0v73LNB6~37POazuSAHUVXmbRglScZRgv4JTIrqmRhBNqjp54EEIRxsmfACjFcfiv1liKgHHi7vCM3GC34T-YcXUAJ8md9NHZ3ZQ__"
+                    width={200}
+                    height={200}
+                    alt=""
+                  />
+                  <div>
+                    <p className="font-medium text-[14px] md:text-[16px] lg:text-lg">
+                      Telegram
+                    </p>
+                    <p className="text-[10px] md:text-[11px]">
+                      Provide access to your private Telegram channel
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {whatsIncluded == "links" && (
+            <div className="border mt-6 rounded-xl p-4 bg-white">
+              <p className="font-medium text-lg">
+                Share the product link below
+              </p>
+              <div className="grid grid-cols-1 gap-x-5 mt-4">
+                <div className="">
+                  <input
+                    type="text"
+                    className="border w-full h-12 p-2 flex items-center rounded outline-none"
+                    placeholder="Enter Buy Link"
+                    onChange={(e: any) => {
+                      setLink(e.target.value);
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
