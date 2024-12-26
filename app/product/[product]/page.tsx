@@ -248,17 +248,17 @@ const ProductDetails = ({
             <div className="my-3 ">
               <p>Subscription Duration</p>
               <div className="grid grid-cols-3 gap-x-3 mt-1">
-                <div className="py-2 px-3 border rounded-md border-[#EBEBEB] flex flex-col justify-center">
+                <div className="py-2 px-3 border rounded-md border-[#EBEBEB] flex flex-col justify-center hover:bg-[#F7F7F5] transition-all duration-300">
                   <p className="font-medium">3 Month Access</p>
-                  <p className="text-[#75757E]">$price</p>
+                  <p className="text-[#75757E]">$ price</p>
                 </div>
-                <div className="py-2 px-3 border rounded-md border-[#EBEBEB] flex flex-col justify-center">
+                <div className="py-2 px-3 border rounded-md border-[#EBEBEB] flex flex-col justify-center hover:bg-[#F7F7F5] transition-all duration-300">
                   <p className="font-medium">6 Month Access</p>
-                  <p className="text-[#75757E]">$price</p>
+                  <p className="text-[#75757E]">$ price</p>
                 </div>
-                <div className="py-2 px-3 border rounded-md border-[#EBEBEB] flex flex-col justify-center">
+                <div className="py-2 px-3 border rounded-md border-[#EBEBEB] flex flex-col justify-center hover:bg-[#F7F7F5] transition-all duration-300">
                   <p className="font-medium">Annual Access</p>
-                  <p className="text-[#75757E]">$price</p>
+                  <p className="text-[#75757E]">$ price</p>
                 </div>
               </div>
             </div>

@@ -65,7 +65,7 @@ export default function AddProduct() {
 
   const [link, setLink] = useState("");
 
-  const [appsPanelVisibility, setAppsPanelVisibility] = useState(false);
+  const [appsPanelVisibility, setAppsPanelVisibility] = useState(true);
   const [whatsIncluded, setWhatsIncluded] = useState<
     "digital-assets" | "private-groups" | "links"
   >("digital-assets");
