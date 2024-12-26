@@ -382,7 +382,7 @@ function ProductUploadContent() {
                 }
                 guildId={discordGuildId ? discordGuildId : ""}
                 privyAccess={privyAccessToken}
-                product_id={discordProductId ? discordProductId : "djfk"}
+                product_id={discordProductId ? discordProductId : ""}
                 CreateDiscordProduct={createDiscordCall}
                 setDiscordGuildId={setDiscordGuildId}
                 setDiscordServerName={setDiscordServerName}
