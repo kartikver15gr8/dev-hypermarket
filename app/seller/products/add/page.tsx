@@ -245,7 +245,7 @@ function CategoryPageContent() {
   const selectDiscordAsProduct = () => {
     setTelegramSelected(false);
     setDiscordSelected(!discordSelected);
-    toast.info(!discordSelected ? "Telegram selected" : "Telegram removed");
+    toast.info(!discordSelected ? "Discord selected" : "Discord removed");
   };
   const selectTelegramAsProduct = () => {
     setDiscordSelected(false);
