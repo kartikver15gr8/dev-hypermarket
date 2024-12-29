@@ -16,21 +16,23 @@ interface TokenResponse {
 
 export async function initiateDiscordOAuth(): Promise<string> {
   const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
-  const redirectUri =
-    process.env.NODE_ENV === "production"
-      ? process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI
-      : process.env.NEXT_PUBLIC_DISCORD_TEST_REDIRECT_URI;
+
+  const redirectUri = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI;
+  // const redirectUri =
+  //   process.env.NODE_ENV === "production"
+  //     ? process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI
+  //     : process.env.NEXT_PUBLIC_DISCORD_TEST_REDIRECT_URI;
 
   if (!clientId || !redirectUri) {
     throw new Error("Missing Discord OAuth configuration");
   }
   const connectUri = process.env.NEXT_PUBLIC_DISCORD_CONNECT_URI;
 
-  return `https://discord.com/oauth2/authorize?permissions=805727479&prompt=none&response_type=code&redirect_uri=https%3A%2F%2Fdev.sendit.markets%2Fseller%2Fproducts%2Fadd&client_id=1308052382373908491&scope=identify+guilds.members.read+email+bot&state=productID`;
+  // return `https://discord.com/oauth2/authorize?permissions=805727479&prompt=none&response_type=code&redirect_uri=https%3A%2F%2Fdev.sendit.markets%2Fseller%2Fproducts%2Fadd&client_id=1308052382373908491&scope=identify+guilds.members.read+email+bot&state=productID`;
 
-  // return `https://discord.com/oauth2/authorize?permissions=805727479&prompt=none&response_type=code&redirect_uri=${encodeURIComponent(
-  //   redirectUri
-  // )}&client_id=${clientId}&scope=identify+guilds.members.read+email+bot&state=productID`;
+  return `https://discord.com/oauth2/authorize?permissions=805727479&prompt=none&response_type=code&redirect_uri=${encodeURIComponent(
+    redirectUri
+  )}&client_id=${clientId}&scope=identify+guilds.members.read+email+bot&state=productID`;
 }
 
 export async function exchangeCodeForToken(
